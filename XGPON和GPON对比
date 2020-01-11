@@ -1,0 +1,484 @@
+产品名称
+密级
+	
+产品版本	共37页
+	
+
+XG-PON和GPON协议对比
+
+拟制	焦玉军	日期	2012-10-11
+审核		日期	
+批准		日期	
+
+
+ 
+
+华为技术有限公司
+Huawei Technologies Co., Ltd.
+版权所有  侵权必究
+All rights reserved
+ 
+修订记录
+日期	修订版本	修订描述	作者
+2012-10-11	1.0	初稿完成	焦玉军 00178857
+2012-10-25	1.1	根据李红波检视意见修改不当描述	焦玉军 00178857
+			
+			
+
+ 
+目  录
+1	XG-PON发展背景	6
+2	XG-PON应用场景	6
+3	XG-PON和GPON的物理层要求对比	7
+4	XG-PON和GPON GTC层对比	9
+4.1	下行帧格式对比	9
+4.2	上行帧格式对比	12
+4.3	XGEM和GEM帧结构对比	14
+5	XG-PON和GPON PLOAM消息对比	17
+5.1	PLOAM结构对比	17
+5.2	下行PLOAM对比	17
+5.3	上行PLOAM对比	18
+6	XG-PON和GPON OMCI消息对比	20
+7	XG-PON和GPON安全特性对比	21
+8	XG-PON和GPON线路告警对比	22
+8.1	OLT端告警对比	22
+8.2	ONU端告警对比	23
+9	XG-PON和GPON激活过程对比	24
+9.1	ONU状态对比	24
+9.2	ONU激活事件对比	25
+9.3	ONU状态变迁图对比	26
+10	XG-PON和GPON Typeb保护倒换对比	28
+11	XG-PON安全管理介绍	28
+11.1	安全威胁模型	28
+11.2	认证方式	29
+11.2.1	Registration ID认证	29
+11.3	密钥生成	29
+11.3.1	加密方法	29
+11.3.2	根密钥生成	30
+11.3.3	共享密钥生成	30
+11.4	XGEM 载荷加密系统	30
+11.4.1	加密方法	31
+11.4.2	初始计数模块	31
+11.5	数据加密密钥交换和激活机制	32
+11.5.1	单播加密	32
+11.5.2	组播加密	36
+11.6	PLOAM完整性保护和数据源鉴别	37
+11.6.1	加密方法	37
+11.6.2	MIC计算	37
+11.7	OMCI完整性保护和数据源鉴别	37
+11.8	密钥交换的完整性保护和数据源鉴别	38
+11.9	键长小于128bit的XG-PON加密体系	38
+12	XG-PON功率管理介绍	38
+参考协议	39
+
+XG-PON和GPON协议对比
+关键词：XG-PON、GPON、GTC、PLOAM、OMCI
+缩略语清单：
+Abbreviations缩略语	Full spelling 英文全名	Chinese explanation 中文解释
+XGTC		
+XGEM		
+PLOAM		
+FEC		
+AES		
+OMCI		
+MIC		
+		
+		
+		
+		
+		
+
+ 
+1	XG-PON发展背景
+近年来，随着全球范围内接入市场的飞快发展以及全业务运营的快速开展，已有的PON技术标准在带宽需求、业务支撑能力以及接入节点设备和配套设备的性能提升等方面都面临新的升级需求。
+从2004年起，ITU_T的Q2组织开始同步研究和分析从GPON向下一代PON演进的可能性。
+2007年9月，Q2正式发布了用于规范GPON和下一代PON系统共存的增强波长计划。
+2007年11月， Q2正式确定XG-PON的标准化路标，并以“低成本，高容量，广覆盖，全业务，高互通”为目标，迅速推进下一代PON技术标准的研究和制定。
+2009年10月，Q2在SG15全会期间正式发布了XG-PON标准的第一阶段文本，即下一代PON系统的总体需求（ITU-T G.987.1）和物理层PMD规范（ITU-T G.987.2）。
+2010年6月，发布了XG-PON的汇聚层GTC层规范（ITU-T G.987.3）和管理层OMCI规范（ITU-T G.988）。
+2	XG-PON应用场景
+10G GPON应用场景：新建10G GPON网络以及在现有GPON建设局点增加10G GPON进行扩容，将现有GPON建设局点替换成10G GPON的替换场景， 则为10G GPON应用较为成熟时才需要考虑。
+ 
+图1　10G-GPON市场应用场景一：新建10G GPON网络，OLT和MxU新发货
+ 
+图2　10G GPON市场应用场景二：扩容，在现有GPON建设局点增加10G GPON 
+3	XG-PON和GPON的物理层要求对比
+项目	XG-PON	GPON
+线路速率
+	上行：2.48832 Gpbs
+下行：9.95328 Gpbs	上行：1.24416 Gpbs
+下行：2.48832 Gpbs
+波长范围	上行：1260-1280nm
+下行：1575-1580nm	上行：1290-1330nm
+下行：1480-1500nm
+分光比	1:1024	1:256 
+最大传输距离	>=60Km	60Km
+最大距离差	40Km	20Km
+光功率预算	N1：14-29 dB
+N2：16-31dB	Class B: 10-25   Class B+:13-28
+Class C: 15-30   Class C+: 17-32
+FEC	下行：强FEC（强制实现，强制使用）
+上行：弱FEC（强制实现，可选使用）	下行：弱FEC（强制实现，可选使用）
+上行：弱FEC（强制实现，可选使用）
+图3　XG-PON和GPON的物理层规格对比
+从上图可以看出，XG-PON和GPON相比，对于用户可感受到的特性变化如下：
+1）	XG-PON下行默认是FEC打开，使用的FEC编码是RS(248,216)，所以默认情况下，下行GPON最大带宽最多达到8.7Gbps。上行FEC默认关闭，可以通过命令行配置打开，使用的编码是RS(248,232)。GPON的上下行FEC都是默认关闭的，可以通过命令行配置打开，使用的编码都是RS(255,239)。XG-PON和GPON的下行FEC都是针对PON口控制的，上行FEC都是针对ONT控制的。
+2）	XG-PON的上行速率为2.48832Gpbs，下行速率为9.95328 Gpbs；而GPON的上行速率为1.24416 Gpbs，下行速率为2.48832 Gpbs。
+3）	每个XG-PON口理论最大支持1024个ONU；而每个GPON口最大支持128个ONU。
+4）	对于GPON口，最远距离的ONU和最近距离的ONU之间的距离差固定为20公里，对于XG-PON口，距离差最大是40km。 
+5）	对于GPON端口，最远逻辑距离为60公里，而对于XG-PON端口，最远逻辑距离为100公里。
+4	XG-PON和GPON GTC层对比
+4.1	下行帧格式对比
+ 
+图4　XG-PON下行物理帧的组帧过程
+XGTC层包含, XGTC业务适配子层(XGTC service adaptation sublayer)，XGTC成帧子层(the XGTC framing sublayer)和XGTC物理适配子层(XGTC PHY adaptation sublayer)，各层的基本功能类似于GPON。
+XGTC业务适配子层(XGTC service adaptation sublayer):做GEM适配和OMCI适配。OMCI gemportID = ONU ID。这与GPON存在差异，GPON需要通过Config portid的PLOAM进行配置。
+XGTC成帧子层(the XGTC framing sublayer)：PLOAM和XGTC载荷复用和解复用，XGTC添加和切除，基于ALLOC-ID的内部路由功能。
+XGTC物理适配子层(XGTC PHY adaptation sublayer)：物理同步(PSBd和PSBu)和识别；FEC(FEC是在上下行方向上都是必须支持的，下行必须打开，上行方向是可选的。下行方向的FEC是RS(248, 216)，由RS(255, 223)删节而来，上行方向是RS(248, 232)，由RS(255, 239)删节而来，删节指的是有7个字节的全0被忽略了没有在线路上传送，实际FEC结构中是有的)；扰码(x58 + x39 + 1)；线路编码解码(上下行都是NRZ编码)。 
+图5　XG-PON和GPON下行帧格式对比
+1)	下行帧由于FEC强制打开，通过FEC可以进行线路质量的评估和纠错，所以BIP检验已经被删除了,同时删除了下行FEC标志比特。
+2)	PSYNC、Superframe counter以及新增的PON-ID组成了PSBd结构，取代了GPON的PSYNC和Ident域。
+3)	下行PLOAM可以发送多个，PLOAM的个数由PLOAM count来定义，但是每帧最多给某个ONU发送一个单播和一个广播PLOAM。PLOAM count域取代了GPON的Alen域， XG-PON删除了ATM相关应用。
+4)	BWmap length代表BWmap域的长度。HLend模块包含Bwmap长度和PLOAM个数，并且HLend域只有一个。BWmap length: 11bits，最多2048个bwmap；PLOAM count:8bits，最多有255条ploam。
+HEC：Hlend结构的错误检测和纠正编码，功能类似GPON  Plend结构的CRC校验域。
+5)	Bwmap分配结构中，Flags仅2个bit，指示是否允许上行发送PLOAMu和是否允许上行发送DBRu，XG-PON的DBRu只有一种模式，所以只需要一个bit。PLOAM放在ONU上行的第一个TCONT结构中，带PLOAM的上行突发XGTC帧头为52字节（XPLOAM占48字节，UXGTC头占4字节），该ONU的后续TCONT不能带有PLOAM。
+XG-PON Flags域去掉了GPON中用来指示ONU上行是否打开FEC的比特，引入了Bprofile域，指示ONU使用哪种帧头，一般是长帧头和短帧头两种，一个用于注册发现，一个用于正常通信，profile同时指示上行是否使用FEC，profile的内容由OLT通过profile PLOAM消息提前发送给ONU。
+6)	StartTime：StartTime = 0表示上行XGTC物理帧的第一个双字，StartTime最大=9719，表示上行XGTC物理帧最后一个双字，StartTime的单位是双字，即4个字节为单位。注意，PSBu没有放在StartTime的考虑之内。在一个ONU的上行时隙分配中，同一个Burst，只有第一个分配时隙结构有StartTime，其余的都是0xFFFF，StartTime不等于0xFFFF时，表示下一个Burst分配结构的开始；而GPON中每个Burst不同的分配时隙结构StartTime都不相同。 XG-PON的带宽分配支持跨帧。
+7)	GrantSize：包括DBRu和XGTC载荷，不包含XGTC帧头帧尾和FEC开销。单位是双字(4字节)，只有PLOAM开销的GrantSize是0，最小的值是1，即只包含DBRu结构的Grant，最小的带载荷Grant的GrantSize是4(没有设置DBRu)。GrantSize域取代了GPON中的StopTime域。XG-PON分配的带宽可能包含的内容为DBRu、有效数据载荷，不包含FEC开销，FEC开销部分需要OLT DBA算法预留，而GPON FEC开销是包含在分配带宽里的，另外GPON的分配带宽包含PLOAM带宽。
+8)	FWI：Forced Wakeup Indication，针对支持节能模式使用，激活某个ONU停止休眠，只有该ONU的第一个下行Alloc才有效，后续的无效。（XG-PON新增的节能功能）
+9)	BurstProfile:指示ONU上行突发XGTC帧使用哪种模板，模板定义了前导码、定界符的大小和类型，以及FEC编码状态。模板通过Profile PLOAM消息提前下发给ONU。XGPON增加了BWMap的构造和解析规则说明：
+OLT分配时隙结构应该按照StartTime的升序来排列BWMap
+OLT必须考虑上行突发帧结构和TCONT之间间隙的开销
+StartTime最小值为0，即上行帧结构的帧头技术上可以算成是前一物理帧的一部分StartTime最大值是9719，即某一ONU的上行Burst可以跨帧分配
+每个BWMap最多的分配时隙结构是512个
+每个突发帧最多分配16个AllocID
+每个Bwmap给一个ONU最多64个分配结构
+每个Bwmap给一个ONU最多4个Burst。
+最大的分配带宽大小是9720个双字
+Burst最大的大小是9720个双字
+XGPON增加了BWmap 解析异常处理说明：
+总的异常处理原则是不能够引发上行冲突。
+当ONU检测到一个分配结构里面有bit错误的时候，本次分配结构和后续的分配结构全部丢弃。
+如果ONU发现StartTime大于9719，那ONU本轮不应该上行发送该burst。
+如果违背了BWMAP规则5～10，那么应该将上行发送切短至满足规则5～10。
+如果ONU收到连续的两个或者更多的burst分配而自己又不能处理的，后面的burst就不需要发送了。
+如果ONU检测到一个burst里面有一个未知的Alloc-ID，那么burst剩余的部分不应该再发送了；
+如果ONU检测到另外一个ONU的Alloc-ID，那么ONU应该忽略这个分配，且不要尝试发送这个分配时隙。
+4.2	上行帧格式对比
+ 
+图6　上行XGTC帧的组帧过程
+XG-PON上行组帧过程和下行组帧过程基本相同，不同ONU组成的上行物理帧长度仍然是125us，38880字节。在上行报文中PSBu域和XGTC帧头是需要预留带宽的，DBA分配的带宽不包括这部分，DBA分配的带宽也不包含FEC开销。
+ 
+图7　上行帧结构对比
+XG-PON和GPON的上行GTC帧结构对比，可以看出两者在GTC帧头上的定义有了较大差异： 
+1)	ONU-ID升级到了10bits，GPON为8bit。
+2)	Ind：Bit8表示是否有上行PLOAM需要发送，和GPON中作用相同；Bit0表示DyingGasp，XG-PON新增，而GPON使用PLOAM消息上报DyingGasp，上报之前需要申请PLOAM授权；其它Bit保留未用；删除了上行FEC和RDI状态标识比特，因为OLT可以通过上行帧的前导码和定界符的大小、样式知道ONU使用的profile，从而知道FEC状态。
+3)	HEC校验ONU-ID+Ind区域
+4)	PLOAM区域可有可无，OLT根据对应下行帧的PLOAM指示来判定当前上行帧里是否有PLOAM，PLOAM不包含在带宽分配结构中，而GPON中PLOAM带宽包含在第一个分配时隙中。
+5)	DBRu区域可有可无，如果有固定是4字节，而GPON中DBRu可能为2、3字节；BufOcc：4字节为单位，最小为0，最大为0xfffffe，0xffffff表示无效值。（补充协议）
+6)	XGTC帧尾是一个4字节的BIP校验码，针对整个上行XGTC Burst，只有FEC Off时，BIP才被用做误码计算，FEC On时，根据FEC纠错后的结果做误码计算。
+4.3	XGEM和GEM帧结构对比
+ 
+图8　GEM帧结构对比
+1)	XGEM的帧头从GPON的5个字节变成了8字节。
+2)	PLI：XGEM SDU或者SDU分片长度的值，范围为0～16383，XGEM 载荷的长度为4字节对齐，PLI不需要等于XGEM 载荷的长度，它的单位是字节，式中的L就是PLI，P为XGEM 载荷的长度，可能会有1~7个字节为0x55的IDLE填充。
+ 
+ 
+图9　XGEM Payload格式
+3)	Key Index [2 bits]：01第一套密钥，10，第二套密钥，00，不使用加密，11保留。Key Index 为XGPON相对GPON新增的内容，通过XGEM头表示是否加密以及加密所用密钥，另外，XGPON支持上行方向加密。Key Index的引入，使得相对于GPON来说，XGPON能够实现在加密开关时，业务不受影响，即动态发包过程中打开或者关闭加密，不会丢包。
+4)	XGEM Port-ID：Port-ID从GPON的12bit变成了16bit，范围为0～65535,0~65534用于业务和OMCI，IDLE帧XGEM Port-ID为0xFFFF即65535。IDLE帧载荷长度是4的倍数，包括0~最大值的任意一个，IDLE不加密，接收者直接丢弃。
+5)	LF指净荷类型标识。0表示非帧尾数据段，1表示帧尾数据段,功能相当于GPON GEM帧头的PTI。HEC和GPON中作用相同，用来校验和纠错。Options目前协议还没有讨论如何使用，暂时保留。
+5	XG-PON和GPON PLOAM消息对比
+5.1	PLOAM结构对比
+XG-PON相对GPON的PLOAM消息，消息增加了SeqNo序列号，CRC校验替换成MIC校验，消息长度由13字节扩展到48字节，XG-PON下行支持一帧发送多个PLOAM消息。
+功能	G.984.3	G.987.3
+消息结构	 	 
+消息长度 	13 bytes	48 bytes
+速率 	下行: 1个PLOAM/帧 
+上行: 1个PLOAM/burst	下行: 1个广播PLOAM/帧；1个单播PLOAM/ONU/帧 
+上行:1个PLOAM/burst 
+通道健壮性	弱	强
+消息完整性校验	CRC-8	AES-CMAC 
+图10　PLOAM结构对比
+5.2	下行PLOAM对比
+下行PLOAM消息：物理帧功能配置由一个Profile PLOAM消息完成，GPON中的password在XG-PON中改为Registration ID，OMCC配置和GEM加密在XG-PON中已经不是由PLOAM消息完成，OMCC在ONU获取到ONU-ID后自动生成，是否加密以及使用哪个密钥则是通过XGEM帧头的Key Index直接指示。
+XGPON密钥交换流程完全不同于GPON，后面会详细介绍，密钥交换过程OLT和ONU各只用到一个PLOAM消息，OLT是Key_Control消息，ONU是Key_Report消息。
+功能	G.984.3	G.987.3
+物理帧功能配置	Upstream_Overhead
+  Extended_Burst_Length	Profile
+激活	        Assign_ONU-ID 
+        Ranging_Time 
+        Deactivate_ONU-ID 
+        Disable_Serial_ Number 
+        Assign_Alloc-ID 
+        POP-UP 	       Assign_ONU-ID 
+       Ranging_Time 
+       Deactivate_ONU-ID 
+       Disable_Serial_ Number 
+       Assign_Alloc-ID 
+保护自动倒换	        PST	        无
+密钥	        Request_key
+        Key_swithcing_time	        Key_Control
+节能	        无	        Sleep_Allow
+认证	        Request Password	        Request_Registration
+错误控制	         PEE.	        无
+OMCC建立	        Configure Port-ID	        无
+GEM 加密	Encrypted_Port-ID	无
+图11　下行PLOAM对比
+5.3	上行PLOAM对比
+上行PLOAM消息：REI和Dying gasp在XG-PON中已经不是由PLOAM消息完成，XG-PON增加了节能功能。
+功能	G.984.3	G.987.3
+激活	        Serial_Number_ONU	        Serial_Number_ONU 
+密钥	        Encryption_Key	        Key_Report
+认证	        Password	        Registration
+保护自动倒换	        PST	        无
+错误控制	        REI.	        无
+故障上报	        Dying-Gasp	        无
+健壮性校验	        ACK	        ACK
+节能	        无	       Sleep request 
+图12　上行PLOAM对比
+6	XG-PON和GPON OMCI消息对比
+XG-PON相对GPON的OMCI消息，4字节的CRC校验替换成了MIC校验。
+在G.984.4 amd1标准中增加Extended OMCI message的定义，即每个OMCI消息长度可支持到最大1980个字节长度。为区别为扩展的OMCI消息，标准中将原来的OMCI消息定义叫做baseline OMCI message，而将可变长的OMCI消息叫做Extended OMCI message。
+在标准中要求，OLT和ONU强制要求支持baseline OMCI message，而可选支持Extended OMCI message，在XG-PON标准中这部分共用。
+Content 	G.984.4 OMCI	G.988 OMCI
+OMCC建立		 通过在PLOAM消息配置PORT-ID指定 		 分配ONU-ID后自动建立 
+OMCI消息保护		OMCI  AAL5尾部增加CRC-32		OMCI  MIC尾部增加32-bits AES-CMAC
+OMCI加密		 OLT发送加密的PORT-ID PLOAM消息 		 OLT发送包含非零的key索引的OMCI消息 
+可提供的MIB信息		 G.984.4 所有 MIB		 删除: 
+	 L3 service; 
+	 802.11 service
+	 新增: 
+	 end to end MPLS support;
+	 dual management improvement:
+	 SNMP parameter;
+	 TR-69 server;
+	 support G.987.3 enhanced security features;
+	 IPv6 support;
+	 Power management configuration support;
+	  extended performance monitoring.
+	 OMCI for 10GEPON
+共用的OMCI		 G.984.4 定义		G.988 定义
+图13　OMCI对比
+7	XG-PON和GPON安全特性对比
+XG-PON相对GPON，有更好的安全性，不但支持下行单播、组播数据加密，还支持上行单播数据加密。XG-PON ONU和OLT之间的密钥交互使用的是密钥密文，GPON密钥交互使用的是密钥明文。
+管理消息方面，XG-PON相对GPON有更高的完整性保护，OMCI和PLOAM消息都经过MIC校验。XG-PON支持三种认证方式。
+功能	G.984.3	G.987.3
+加密算法		 AES-128		 AES-128
+密钥更新		 下行密钥更新使用超帧计数器保持同步 		 上下行密钥更新是由 OLT发起，然后OLT和ONU之间通过消息交互进行密钥更新 
+用户数据保护		 下行单播加密 (强制)		 下行单播加密 (强制)
+	 下行组播加密 (可选)
+	 上行单播加密 (可选)
+管理消息完整性保护		 PLOAM – CRC8
+	 OMCI – CRC32		 PLOAM – AES-CMAC
+	 OMCI- AES-CMAC
+认证		 基于password的认证（可选） 
+	 基于OMCI的双向认证（可选） 		 基于Registration ID认证（强制）
+	 基于OMCI的双向认证（可选） 
+	 基于802.1x的双向认证（可选） 
+图14　安全特性对比
+8	XG-PON和GPON线路告警对比
+8.1	OLT端告警对比
+XG-PON相比GPON的OLT端告警，告警数量减少了许多，Burst丢失告警替代了GPON的帧定界告警，发光漂移告警修改合并为一个告警，删除了线路质量告警和物理设备错误告警，增加了OMCI信道丢失告警。
+功能	G.984.3	G.987.3
+光信号丢失	              LOS
+              LOSi	LOS
+帧定界丢失	LOF
+              LOFi
+              LCDGi  	               LOBi
+发光漂移	DOWi
+      TIWi	               TIWi
+线路误码	              SDi
+              SFi
+              RDIi	               无
+物理设备错误	              TF
+              PEEi	               无
+断电告警	              DGi	               无
+PLOAM授权响应异常或丢失	              DFi
+              LOAi
+              LOAMi
+              LOKi	               DFi
+               LOPCi
+测距失败	SUFi	SUFi
+OMCI信道丢失	              无	               LOOCi
+链路失配	MISi	               无
+未知消息	MEMi	无
+异常发光	      TIA	       无
+图15　OLT端告警对比
+8.2	ONU端告警对比
+XG-PON ONU端告警仅剩下一个下行同步丢失告警，GPON告警全部删除了。
+功能	G.984.3	G.987.3
+光信号丢失	              LOS	LODS
+               
+帧定界丢失	LOF 
+LCDG	
+线路误码	              SD
+              SF
+              RDI	               无
+物理设备错误	              TF
+              PEE	               无
+测距失败	              SUF	               无
+链路失配	MIS	               无
+未知消息	MEM	无
+去激活	      DACT	       无
+Disable	DIS	无
+图16　ONU端告警对比
+9	XG-PON和GPON激活过程对比
+9.1	ONU状态对比
+GPON的注册过程ONU有7个激活状态，在XGPON中，ONU的激活状态为6个，原来GPON中的O2、O3状态合并为一个，原来GPON中的O6（POPUP）状态改名为O6（Intermittent LODS）状态。
+XGPON ONU的六个激活状态定义如下：
+O1 – Initial state
+初始态，光发送关闭，所有TC层的配置参数包含ONU-ID，默认或者明确分配的Alloc-Id，默认XGEM Port-ID，burst 模板，EQD等全部丢弃，当下行同步上时，切换到O2-3态。
+O2-3 – Serial Number state
+ONU激活光发送功能，接收并且学习Burst模板PLOAM消息，当ONU收到带已知Burst模板的SN开窗消息时，发送一个带SN响应PLOAM的XGTC帧，这个时候，ONU忽略DBRu标识和BWMAP GrantSize区域。当ONU收到SN等于自己的SN的分配ONU-ID的PLOAM消息时，ONU进入O4态。当收到一个SN等于自己的SN的Disable_Serial_Number PLOAM消息时，ONU进去O7态。如果OLT已经通过某种方式获知了ONU的存在，比如在掉电恢复过程中，OLT可以直接通过一个分配带已知的ONU SN的ONU-ID PLOAM消息，这样，ONU可以忽略O2-3态，直接进入O4态。
+O4 – Ranging state
+如果ONU收到一个带已知模板的测距请求时，回应一个带Registration PLOAM的XGTC帧，测距的时候忽略DBRu标示和GrantSize区域。O4状态的ONU响应如下信息：Profile，Ranging_Time，Deactivate_ONU-ID，Disable_Serial_Number。TO1超时，ONU丢弃ONU-ID和默认的Alloc-ID和默认的OMCI XGEM port-ID，并且进入O2-3态，保留Burst模板信息。当ONU收到一个绝对值的EQD消息时，进入O5态。如果OLT之前在SN确认或者早期ONU的激活过程中已经测试过了ONU的RTD，那么OLT可以直接下发一个Ranging_Time消息，这样，ONU可以直接穿过O4态进入O5态而不经过测距过程。
+O5 – Operation state
+在这个状态下，ONU在OLT的指导下发送上行数据和PLOAM消息。
+O6 – Intermittent LODS state
+处于O5态中的ONU在失去下行同步后会进入O6态，进入O6态时，ONU启动定时器TO2。如果在TO2超时前LOS状态恢复，那么回到O5态；如果TO2超时前没有LOS恢复，那么进入O1态。
+O7 – Emergency Stop state
+收到Disable SN消息（使能不使能字段配置为不使能），关闭发送光，TC层的配置参数包括：ONU-ID，所有的Alloc-ID，默认的XGEM Port-ID，burst模板，EQD全部丢弃。在O7态，ONU保持下行同步，解析下行PLOAM，禁止下行转发数据和上行发送数据。当重新使能后，OLT发送Disable SN消息（使能不使能字段配置为使能），ONU应该进入O1态并且重新上线。当O7态ONU重启的时候，ONU应该保持在O7态。
+为了能够支持激活流程，和GPON一样，ONU应维持两个定时器： 
+a)	TO1：测距状态超时定时器。定时器TO1保证ONU不能在测距状态太长的时间，标准建议是10秒，在O5状态将停止测距状态超时定时器。
+b)	TO2：LODS定时器。定时器TO2保证ONU不处于O6态太长的时间，推荐的TO1初始值为100ms。 
+9.2	ONU激活事件对比
+激活事件	G.984.3	G.987.3
+事件1		 ONU侦听下行帧并且同步		 ONU侦听下行帧并且同步
+事件2		 ONU侦听Upstream_Overhead PLOAM消息		 ONU侦听Profile PLOAM消息
+事件3		当ONU接收到一个已知的上行帧头配置的SN开窗请求的时候，ONU回应一个SN请求。		当ONU接收到一个已知的上行帧头配置的SN开窗请求的时候，ONU回应一个SN请求。
+事件4		 OLT发现一个新的ONU，给该ONU分配一个ONU-ID		 OLT发现一个新的ONU，给该ONU分配一个ONU-ID
+事件5		 OLT下发一个测距开窗请求，并准备精确测距		 OLT下发一个测距开窗请求，并准备精确测距
+事件6		 ONU上行发送Serial_Number_ONU  PLOAM消息响应测距请求		 ONU上行发送Registration PLOAM消息响应测距请求
+事件7		 OLT计算EQD并通过Ranging_Time PLOAM消息下发		 OLT计算EQD并通过Ranging_Time PLOAM消息下发
+图17　ONU激活事件对比
+9.3	ONU状态变迁图对比
+比较XG-PON和GPON状态变迁图，除了O2-3状态的变化，还有一个大的变化是处于O4、O5状态的ONU，当接收到Deactive ONU-ID PLOAM消息时，直接回到O1态，GPON是回到O2状态。
+ 
+图18　XG-PON ONU状态变迁图
+ 
+图19　GPON ONU状态变迁图
+10	XG-PON和GPON Typeb保护倒换对比
+在XG-PON标准中，由于ONU状态定义、PLOAM消息、加密算法实现的不同导致了XG-PON TYPE B保护倒换处理过程与GPON有很大的不同。
+在前面已经介绍了XG-PON ONU的注册状态变化图，与GPON相比，最大的区别是去掉了POPUP状态。因此TYPE B保护倒换处理流程也会发生相应的变化，包括发送的消息以及测距的处理过程。
+GPON TYPE B保护倒换过程中，ONU首先跳到O6状态，当接收到Broadcast POPUP消息后，直接跳转到O4状态，这时OLT向ONU发送测距请求，进行测距处理，测距成功后向ONU发送EQD消息，ONU进入O5状态。
+但在XG-PON标准中，上述的状态及PLOAM消息已经被取消了，在标准中没有明确说明TYPE B保护倒换过程中的处理流程。
+在XG-PON标准中，当ONU检测到LOS告警，直接进入到O6状态，并启动TO2定时器，如果TO2定时器未超时前检测到LOS告警恢复，则直接跳转到O5状态。
+标准中没有说明如何进行重新测距，有两种方案实现对所有ONU的EQD下发，单播方式和广播方式。单播方式是对每个ONU都下发一次Ranging-time message，广播方式是只下发一次广播Ranging-time message，将偏移值告诉所有的ONU，所有的ONU自动调整偏移值。
+11	XG-PON安全管理介绍
+11.1	安全威胁模型
+XG-PON在考虑系统安全性时更加全面，考虑到了下面几种威胁模型：
+a)	由于下行数据通过广播方式发送至与该OLT相连的全部ONU，因此恶意用户可通过替换ONU或对ONU重编程等方式接收其他用户的下行数据。
+b)	由于OLT接收到的上行数据可以是来自连接在ODN上的任意ONU，因此恶意用户可通过替换ONU或对ONU重编程等方式将其ONU仿冒成其他用户的ONU设备。
+c)	攻击者可通过多种方式将恶意设备连接在光纤设备上，从而窃取数据或产生仿冒数据流。根据连接点的不同位置，这些恶意设备可仿冒成OLT或ONU。
+d)	在上述任何场景中，恶意用户都能截获并重现线路上交互的数据或进行位翻转攻击。
+由于PON网络的建造环境十分多样，因此，在某些情况下，ODN、分光器甚至ONU的安装都要考虑到物理安全性以及业务数据的安全性。但从经济性角度考虑， XG-PON的某些安全特性是可选的。
+11.2	认证方式
+认证机制有三种，第一种机制基于Registration ID，在ONU激活阶段用于ONU向OLT认证，不支持OLT向ONU认证，在所有XG-PON系统是必须支持的特性，另外两种支持OLT和ONU的双向认证，其中一个是基于OMCI消息交互，另外一个能提供很多扩展特性的基于IEEE802.1X双向认证机制。
+XG-PON系统应同时具备三种认证方式的能力，但是否使用后两种认证方式完全取决于运营商的实际需求。换句话说，TC层实现应具备支持双向认证的能力，但设备本身不一定支持这些功能。
+如果对ONU设备的认证失败，OLT应采取措施进行功能恢复，包括重复认证、拦截上下行数据流、去激活或禁用ONU、流氓ONU诊断处理等方法。
+11.2.1	Registration ID认证
+只支持ONU向OLT的认证，不支持反向的认证。为了实现这个过程，必须：
+	运营商分配注册ID
+	注册ID知会到OLT，并且通过某种方式分发到终端用户
+在注册过程中，ONU用注册ID消息应测距消息，OLT收到后根据本地的信息来判断注册ID是否合法。
+OLT可以随时通过下发注册请求查询某个ONU的注册ID，如果ONU没有分配到注册ID，那么就使用默认的注册ID(即全0)。
+11.3	密钥生成
+11.3.1	加密方法
+优先使用AES-128的加密方法，T = AES-CMAC(K, M, Tlen)
+―	K：密钥
+―	M：密文输入
+―	Tlen：密文输出长度
+―	T：密文输出
+11.3.2	根密钥生成
+CMAC：基于密码的消息认证编码
+MSK = AES-CMAC((0x55)16, Registration_ID, 128). 注册ID为用户配置的ONU的注册ID或者默认全0。
+MSK是ONU激活后双向认证的起始点，MSK是128bit的，使用55 55 55 55 55 55 55 55 55 55 55 55 55 55 55 55作为键值对注册ID做AES-CMAC
+11.3.3	共享密钥生成
+SK(Session Key)将MSK绑定到OLT和ONU之间的安全关联上下文，SK用于后续的密钥分发：
+SK = AES-CMAC ( MSK , (SN | PON-TAG| 0x53657373696f6e4b), 128 )
+OMCI完整性检查密钥(OMCI_IK :OMCI Integrity Key)用于产生和确认OMCI消息的完整性：
+OMCI_IK = AES-CMAC ( SK , 0x4f4d4349496e746567726974794b6579, 128 )
+PLOAM完整性检查密钥(PLOAM_IK: PLOAM Integrity Key)用于产生和确认XGTC层的单播PLOAM消息：
+PLOAM_IK = AES-CMAC ( SK , 0x504c4f414d496e7465677274794b6579, 128 )
+对于下行广播PLOAM消息和在MSK可用之前的激活流程中，使用默认的PLOAM_IK即16个0x55。
+密钥加密密钥(KEK: Key Encryption Key)用于保护密钥传输PLOAM：
+KEK = AES-CMAC ( SK , 0x4b6579456e6372797074696f6e4b6579, 128 )
+11.4	XGEM 载荷加密系统
+XGEM加密可以防止数据窃听，密钥生成方法方法使用counter mode (AES-CTR)。
+XGEM载荷加密可能用于任何一个上下行的单播传输或者一个特定的下行广播传输；OLT保证任何时候都有一个PON口的广播密钥对用于广播的XGEM Port-ID，同时保证任何时候每个ONU都有一个单独的密钥对用于该ONU下的所有XGEM Port-ID。
+XGEM帧头里面有两个bit（key index）用来标识当前使用的密钥编号：
+•	00 – XGEM frame payload is unencrypted;
+•	01 – XGEM frame payload is encrypted using the first encryption key;
+•	10 – XGEM frame payload is encrypted using the second encryption key;
+•	11 – reserved.
+11.4.1	加密方法
+XGEM加密方法是AES-128密码，使用AES-CTR(counter mode, NIST SP800-38A)，AES-CTR使用密钥和一个计数值进行加密运算后和未加密XGEM载荷进行exclusive-OR-ed运算后产生加密报文，这个计数值对每个XGEM载荷都有一个“初始计数模块”，这个计数值通过下面标准的算法来增加。加密只加密XGEM帧的净荷，不加密XGEM帧头。
+11.4.2	初始计数模块
+128bit的初始计数模块对于一个特定的XGEM帧来说和SFC(超级帧计数)以及该帧的内部帧计数(IFC)相关。即某XGEM帧的初始计数模块和SFC和IFC有关系
+在组建初始计数模块时，SFC的MSB部分被忽略，只用低50bit，为了获取特定XGEM帧的IFC，使用下面的过程。
+ 
+图20　获取IFC
+上图16字节的分块称为XGTC帧分块。下行方向，XGTC帧结构被分成序列号从0到8464的16字节的XGTC帧分块，最后一个XGTC帧分块是8个字节，这个序列号是14bit的。上行方向，XGTC突发帧被分成序列号从(StartTime/4)到(StartTime/4 + X )，X是该XGTC上行突发帧的上行完全和未完全的16字节的XGTC帧分块数目，最小是1，这个序列号是14bits。对于一个2.5G上行的系统，最大的StartTime是9719，这样，某个burst最大的序号就是2429，最大XGTC突发帧大小是9720双字或者2430个XGTC帧分块，这样，最大的XGTC帧分块的序号就是4858即2429×2。XGEM可以在XGTC 帧结构中XGTC帧分块4个位置对齐(4*4 = 16)，XGEM的IFC就是该XGEM最前面4个字节所在XGTC帧分块的序列号。
+ 
+图21　下行初始化计数模块构建
+上图中128bit的加密密钥是通过PLOAM消息在ONU和OLT之间交互得到的，采用的下面的密钥交换和激活机制。
+11.5	数据加密密钥交换和激活机制
+11.5.1	单播加密
+单播密钥由ONU产生并传送给ONU。当上行加密使能时，上下行同时使用这个密钥。OLT和ONU维护一套加密解密功能的逻辑状态变量，这套状态信息指导密钥交换和新密钥的切换，所有的状态机全部运行在ONU的O5态，当ONU激活或者重激活后，密钥全部去使能，并且在KEK密钥建立之后重新通过PLOAM消息获取。密钥交换通过OLT的控制来完成，相关事件如下：
+1)	OLT请求新密钥，请求不到应该重新请求
+2)	ONU收到密钥请求PLOAM，产生一个随机密钥后发给OLT，密钥使用AES-ECB加密，键值是KEK；
+3)	OLT接收到密钥后保存到本地；
+4)	随后OLT通过PLOAM消息确认收到的密钥，确认的PLOAM消息中携带密钥和密钥的序号；
+5)	ONU收到确认信息后，可以知道OLT已经感知到了这个密钥，ONU就可以将这个密钥纳入使用，ONU回应一个密钥上报消息通知OLT这个密钥的名字；
+6)	如果OLT想检查ONU的密钥是否和本地一致，OLT可以下发一个请求密钥名字的Key_Control PLOAM消息，ONU回应密钥名字，这样OLT就可以检查了。
+ 
+图22　密钥交换过程中的密钥作用域示意图
+单播加密的OLT状态机：
+1)	KL0：加密初始态，初始态没有激活的密钥，当需要单播加密的时候，OLT进入KL1态；
+2)	KL1：密钥请求态，OLT下发Key_Control PLOAM消息请求新密钥，在这个态，新密钥在局端的收发都没有使用，如果有旧密钥，OLT就使用旧密钥进行收发，当收到一个新密钥的时候，OLT进入KL2态；如果定时器TK1超时且没有接收到Key_Report PLOAM密钥，OLT重新发送密钥请求消息，仍然处于KL1态；
+3)	KL2：密钥确认态，在KL2态，新密钥仅用来发送，不可以用来接收，就密钥即可以用来接收，也可以用来发送，OLT开始使用新密钥对XGEM载荷进行加密；备注：KL2态属于中间态。
+4)	KL3：密钥确认等待态，OLT通过Key_Control PLOAM消息确认新密钥，新密钥可以用来在局端的收发，旧密钥只可以用于局端的接收不可以用于局端的发送，一旦Key_Report PLOAM接收到了，OLT进入KL4态，如果TK2定时器超时且没有接收到Key_Report PLOAM，OLT返回到KL1态重新请求新密钥；
+5)	KL4：密钥激活态，当Key_Report PLOAM收到后，旧密钥无效，新密钥有效。如果需要检查密钥，那么OLT进入KL3态，如果需要一个新的密钥(这个需要应该用户设定的周期驱动，比如5分钟，比如一个小时)，OLT进入KL1态；
+单播密钥OLT需要维护的3个定时器：
+a)	TK1：OLT密钥交换定时器，用于限制OLT处于KL1，KL2，KL3状态的时间长度，标准推荐100ms；
+b)	TK2：密钥等待定时器，用于等待ONU密钥上报PLOAM消息，标准推荐是10ms；
+c)	TK3：密钥确认定时器，用于等待ONU密钥确认PLOAM消息，标准推荐是10ms；
+ 
+图23　密钥交换过程OLT状态机
+单播加密的ONU状态机：
+1)	KN0:密钥未激活态，ONU处于O5态，没有密钥激活，当收到OLT下发的Key_Control PLOAM时，进入KN1态；
+2)	KN1:密钥产生态，ONU产生新密钥，如果有旧密钥，旧密钥用于ONU的收发，新密钥不可以用于收发；
+3)	KN2：密钥确认等待态，ONU发送一个Key_Report PLOAM给OLT，新密钥发送的时候使用AES-ECB(KEK)，新密钥可以用来接收，不可以用来发送，当ONU收到一个密钥确认的Key_Control PLOAM消息时，ONU进入KN3态；如果TK5定时器超时而且没有密钥确认的Key_Control PLOAM消息时，ONU重新发送Key_Report PLOAM给OLT，如果ONU重新收到一个请求新密钥Key_Control PLOAM，仍然重新发送同样的Key_Report PLOAM给OLT；
+4)	KN3：密钥确认态1，在KN3，ONU可以用新密钥来收发，ONU开始使用新密钥来加密XGEM载荷，旧密钥只能发，不能收。ONU上报Key _Report PLOAM给OLT已知的密钥和密钥名字，上报后进入KN4态；
+5)	KN4：密钥确认态2，在KN4态，ONU使用新密钥收发，旧密钥无效，一旦ONU收到确认的Key_Control PLOAM，ONU回退到KN3态，一旦收到请求新密钥的Key_Control PLOAM，ONU回退到KN1态。
+ONU端的定时器：
+a)	TK4：限制ONU处于KN1，KN2，KN3的时间，标准推荐是100ms。
+b)	TK5：密钥确认等待时间，限制KN2态 ONU等待OLT密钥确认消息的时间，标准推荐20ms。
+ 
+图24　密钥交换过程ONU状态机
+11.5.2	组播加密
+组播密钥通过OMCI下发，密钥通过AES-ECB加密，键值是KEK。
+11.6	PLOAM完整性保护和数据源鉴别
+使用8个自己的MIC来判别PLOAM数据的来源和PLOAM消息的完整性保护。
+11.6.1	加密方法
+使用AES-CMAC加密方法(AES-128)。
+11.6.2	MIC计算
+PLOAM-MIC = AES-CMAC (PLOAM_IK, Cdir  | PLOAM_CONTENT, 64)
+Cdir上行为2，下行为1，PLOAM_CONTENT 为PLOAM消息的前40个字节。 
+图25　PLOAM 加密示意图
+11.7	OMCI完整性保护和数据源鉴别
+类似于PLOAM，不过MIC是4字节的。
+OMCI-MIC = AES-CMAC (OMCI_IK, (Cdir  | OMCI_CONTENT), 32)
+ 
+图26　OMCI 加密示意图
+11.8	密钥交换的完整性保护和数据源鉴别
+在ONU激活阶段，ONU PLOAM完整性保护和数据源鉴别的键值是默认值(0x55)16,PLOAM-MIC = AES-CMAC ((0x55)16, Cdir  | PLOAM_CONTENT, 64),这个时候MSK是无效的，当ONU发送注册ID到OLT后，MSK就可以产生了，所有其他的密钥(KEK，SK，OMCI_IK等)就开始起作用了。
+ONU认证或者重认证完成后，OLT和ONU有10ms的时间间隔来生成新的公共密钥，在这个间隔内，发送者应该保持安静或者使用旧的公共密钥，如果检测到新的公共密钥或者在这个间隔结束的时候，尽快切换过去。在这个间隔内，接收者应该同时使用新旧公共密钥来检测，当发现收到新的公共密钥时，马上切换过去。
+当PLOAM或者完整性不正确或者数据源不正确时，需要报LOPCi告警(Loss of PLOAM channel)或者LOOCi(Loss of OMCI channel)，或者屏蔽上下行发送或者启动流氓ONU检测。
+11.9	键长小于128bit的XG-PON加密体系
+有效键长是随机产生的键长，键值使用预定义的比特编码，假如有效键长是64bit，那么加密的键长仍然是128bit，只不过剩下的64bit使用预定义的比特编码比如0x55。
+12	XG-PON功率管理介绍
+参考协议
+ITU-T  G.984.1~4
+ITU-T  G.987.1~3，ITU-T  G.988
