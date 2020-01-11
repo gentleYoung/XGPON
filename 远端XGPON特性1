@@ -1,0 +1,500 @@
+产品名称Product name
+密级Confidentiality level
+TranStar	秘密
+产品版本Product version	Total  pages 共 ？页
+SD513X芯片XGPON特性测试指导书
+Huawei Technologies Co., Ltd. 
+华为技术有限公司
+All rights reserved
+版权所有  侵权必究
+修订记录Revision record
+日期
+Date	修订版本Revision version	修改描述 
+change Description	作者
+Author
+2012.11.12	1.0	初稿完成	焦玉军 00178857
+
+目录
+1	XGPON概述	7
+1.1	XGPON应用场景	7
+1.2	XGMAC接口所处的位置	8
+2	XGPON测试环境和测试组网图	8
+2.1	硬件配置	8
+2.2	软件版本	8
+2.3	测试组网图	10
+2.4	命令行访问说明	11
+2.4.1	主控板串口进入通明通道和退出方法	11
+2.4.2	XGBC单板串口访问界面	12
+2.4.3	主控板访问界面	12
+2.4.4	ONT访问界面	13
+3	SD513x芯片 XGPON特性测试方法	13
+3.1	ONT注册上线	13
+3.1.1	ONT注册上线测试	13
+3.1.2	下行异常报文冲击	13
+3.1.3	前导码和定界符测试	14
+3.2	AES	15
+3.2.1	下行单播XGEM Port解密测试	15
+3.2.2	下行组播XGEM Port解密测试	15
+3.2.3	下行单播OMCI解密	17
+3.2.4	下行组播OMCI解密	17
+3.2.5	密钥切换测试	18
+3.2.6	上行单播XGEM Port、OMCI加密测试	19
+3.2.7	加密模式测试	19
+3.3	FEC	20
+3.3.1	下行FEC纠错能力测试	20
+3.3.2	下行FEC统计测试	21
+3.3.3	下行FEC Second测试	22
+3.3.4	上行FEC插错测试	22
+3.3.5	上行FEC和Burst Profile ID切换统计测试	23
+3.4	XGEM	23
+3.4.1	本地增删XGEM Port测试	23
+3.4.2	下行ETH切片测试	24
+3.4.3	上行切片测试	25
+3.5	OMCI	25
+3.5.1	OMCI MIC校验测试	25
+3.5.2	变长OMCI接收测试	26
+3.5.3	变长OMCI发送测试	26
+3.5.4	接收OMCI缓存溢出测试	27
+3.5.5	CPU将OMCI报文切片发送测试	27
+3.5.6	软件做OMCI MIC加速测试	28
+3.5.7	动态刷新OMCI Ready指示测试？？？？？？？？	28
+3.6	PLOAM	28
+3.6.1	PLOAM MIC校验测试	28
+3.6.2	接收广播ONU-ID的PLOAM消息测试	29
+3.6.3	过滤指定的MSG-ID的PLOAM消息测试	29
+3.6.4	PLOAM接收缓存复位测试	29
+3.6.5	XGMAC处理Ranging_Time PLOAM消息测试	30
+3.6.6	PLOAM接收缓存满丢弃测试	30
+3.6.7	软件进行PLOAM MIC校验测试	31
+3.7	诊断运维	31
+3.7.1	PON-ID信息同步测试	31
+3.7.2	上行加扰不加扰测试	32
+3.7.3	下行加扰测试	32
+3.7.4	下行XGEM抓包测试	32
+3.7.5	下行Bwmap抓包测试	33
+3.7.6	下行PLOAM抓包测试	33
+3.7.7	上行Burst Data抓包测试	33
+3.7.8	下行接收FCS错误报文丢弃控制测试	33
+3.7.9	光模块使能状态模式测试	33
+3.8	DBA	34
+3.8.1	4字节带宽授权测试	34
+3.8.2	PLOAM授权测试	34
+3.8.3	多个Burst授权测试	34
+3.9	Flush	34
+3.10	优先级抢占	34
+3.11	Typeb	35
+4	附录	35
+
+图目录
+图 1	10G-GPON市场应用场景一：新建10G GPON网络，OLT和MXU新发货	7
+图 2	10G GPON市场应用场景二：扩容，在现有GPON建设局点增加10G GPON	7
+图 3	XGPON接口在芯片中所处的位置	8
+图 4	测试组网1：正常测试场景	10
+图 5	测试组网2：TYPEB测试场景	10
+图 6	测试组网3：多猫测试场景	11
+
+SD513X芯片XGPON特性测试指导书
+关键词：Bwmap、DBRu、XGEM、PLOAM、OMCI、FEC、AES
+摘  要：本文对XGPON接口特性进行描述，对XGPON具体实现和测试方法进行说明，以指导XGPON接口特性的测试活动。
+缩略语清单：
+Abbreviations缩略语	Full spelling 英文全名	Chinese explanation 中文解释
+EQD	Equalization Delay	均衡时延
+DBA	Dynamic Bandwidth Allocation	动态带宽分配
+BWmap	Bandwidth Map	带宽分配指示字段
+BIP	Bit Interleaved Parity	比特间插奇偶校验
+Alloc-ID	Allocation Identifier	分配标识符
+CRC	Cyclic Redundancy Check	循环冗余校验
+DBRu	Dynamic Bandwidth Report upstream	上行动态带宽报告
+FEC	Forward Error Correction	前向纠错
+GEM	GPON Encapsulation Method	GPON封装模式
+XGPON	10 Gigabit Passive Optical Network	10吉比特无源光网络
+GTC	GPON Transmission Convergence	GPON传输汇聚（层）
+HEC	Header Error Control	帧头差错控制
+ODN	Optical Distribution Network	光分配网络
+OLT	Optical Line Terminal	光线路终端
+OMCI	ONT Management and Control Interface	ONT管理和控制接口
+ONT	Optical Network Termination	光网络终端
+ONU	Optical Network Unit	光网络单元
+Plend	Payload Length downstream	信息净荷长度
+PLI	Payload Length Indicator	净荷长度指示符
+PLOAM	Physical Layer OAM	物理层操作管理维护
+T-CONT	Transmission Container	传输容器
+1	XGPON概述
+1.1	XGPON应用场景
+10G GPON应用场景：新建10G GPON网络以及在现有GPON建设局点增加10G GPON进行扩容，将现有GPON建设局点替换成10G GPON的替换场景， 则为10G GPON应用较为成熟时才需要考虑。
+ 
+图 1 	10G-GPON市场应用场景一：新建10G GPON网络，OLT和MxU新发货
+ 
+图 2 	10G GPON市场应用场景二：扩容，在现有GPON建设局点增加10G GPON
+1.2	XGMAC接口所处的位置
+ 
+图 3 	XGPON接口在芯片中所处的位置
+
+XGMAC处于上图中红色的接口模块的NNI部分。
+上行方向，XGMAC和EPS、EQM协同完成上行数据的调度和发送；下行方向XGMAC基本独立完成数据的接收处理。
+2	XGPON测试环境和测试组网图
+2.1	硬件配置
+OLT机框：SmartAx MA5600T
+主控板：SCUN
+XGMAC单板：H801XGBC/H802XGBC
+10G上行板：H801X2CS
+2.2	软件版本
+主机版本1(用于除TypeB和AES新加密模式的测试)：
+MA5600T(config)#display version 0/9
+  Main Board: H801SCUN
+  ---------------------------------------
+  PCB           Version: H801SCUN  VER B
+  Base     BIOS Version: 215
+  Extended BIOS Version: 220
+  Software      Version: MA5600V800R011C00
+  Logic         Version: (U48)114
+  MAB           Version: 0002
+
+MA5600T(su)%%display compiling time active
+  Copyright(C) Huawei Technologies Co., Ltd. 2002-2012. All rights reserved.
+  Version       : MA5600V800R011C00B033
+  Compiled time : 2012-04-26  05:36:40
+
+  Local language   : CHINESE SIMPLIFIED (DEFAULT LANGUAGE)
+  Compiled time    : 2012-04-26  05:47:36
+
+  General language : ENGLISH (DEFAULT LANGUAGE)
+  Compiled time    : 2012-04-26  05:47:39
+
+  Current Data Area: Area A
+  ------------------------------------------------------------
+  [Area A]
+  Data version  :  MA5600V800R011C70B033
+  Data specs    :  [00]LARGE_SPECS
+
+  [Area B]
+  Data version  :  MA5600V800R011C70B033
+  Data specs    :  [00]LARGE_SPECS
+  ------------------------------------------------------------
+H801XGBC单板版本（解决了上行CRC丢包的问题）：
+MA5600T(config)#display version  0/12
+  Send message for inquiring board version successfully, board executing...
+  Main Board: H801XGBC
+  ---------------------------------------
+  Pcb   Version: H801XGBC VER A
+  Mab   Version: 0000
+  Logic Version: (U3001)8193(U2001)113(U2501)113(U12)002 
+  Main CPU :
+  CPU   Version: (U5017)MPC8548
+  APP   Version: 121(2012-8-1)
+  BIOS  Version: (U5016)104
+
+主机版本 2(仅用于除TypeB和AES新加密模式的测试)：
+H802XGBC单板版本（解决了下行丢包和typeb倒换性能的问题）：
+附相关单板版本文件，主机版本太大不放在这里，可以直接在VMP网站下载，下载地址如下：
+http://vmp/
+           
+2.3	测试组网图
+ 
+图 4 	测试组网1：正常测试场景
+ 
+图 5 	测试组网2：TypeB测试场景
+ 
+图 6 	测试组网3：多猫测试场景
+2.4	命令行访问说明
+
+测试过程中需要访问H801/H802单板命令行时，有两种方法，一种是通过主控板串口进入透明通道访问，一种是直接通过单板串口访问。因为一般的H801/H802单板的串口都不能直接连接，需要使用一个串口连接器，使用起来稍微麻烦，所以一般都是通过透明通道进行单板命令行操作。但不管采用哪种访问方式，所有的命令行都是相同的。
+本文中涉及H801/H802单板命令行操作时，都是通过直接访问单板串口方式进行的，主控板和ONT同样通过串口进行直接访问，访问解密如下。
+2.4.1	主控板串口进入通明通道和退出方法
+ 
+附密码生成工具：
+ 
+2.4.2	XGBC单板串口访问界面
+ 
+2.4.3	主控板访问界面
+ 
+2.4.4	ONT访问界面
+ASIC可能和FPGA不同
+ 
+3	SD513x芯片 XGPON特性测试方法
+3.1	ONT注册上线
+3.1.1	ONT注册上线测试
+1.	测试目的
+通过ONT注册过程中的各种操作，一方面能够检验软件协议栈的健壮性，另一方面可以检验线路的稳定性，同时注册上线过程中的混乱数据，还可以检测芯片逻辑对异常状态处理的健壮性。
+2.	测试涉及命令行
+MA5600T(config-if-gpon-0/12)#port 0 ont-auto-find  enable//打开PON口ONT自动发现
+MA5600T(config-if-gpon-0/12)#display ont autofind 0//查询PON口自动发现的ONT
+MA5600T(config-if-gpon-0/12)#ont confirm 0 all sn-auth snmp ont-lineprofile-id 5133//确认PON下所有自动发现的ONT
+MA5600T(config-if-gpon-0/12)#ont add 0 0 sn-auth  6877687700113018 snmp ont-line
+profile-id 5133//添加ONT
+MA5600T(config-if-gpon-0/12)#ont delete 0 0//删除ONT	
+MA5600T(config-if-gpon-0/12)#ont re-register 0 0//重注册ONT
+MA5600T(config-if-gpon-0/12)#ont deactivate 0 0//去激活ONT
+MA5600T(config-if-gpon-0/12)#ont activate 0 0//激活ONT
+3.1.2	下行异常报文冲击
+1.	测试目的
+通过异常报文冲击，观察ONT是否会挂死。
+2.	测试方法
+OLT单板不支持直接发送超长、超短包、CRC错误报文和jumbo包，可以通过配置ONT接收的包长范围MTU和MIU构造出来下行超长、超短报文，通过配置加密方式和OLT不一致可以构造CRC错误（FCS错误）报文；下行jumbo帧无法构造，需要EDA测试保证，或者OLT单板支持发送jumbo帧时，进行实际对接测试。
+3.	测试涉及命令行
+SDK>asic xgpon gem get eth_length_range ponid 0//查询ONT接收包长范围
+SDK>asic xgpon gem set eth_length_range ponid 0 mtu 1518 miu 100//配置ONT接收包长范围
+SDK>asic xgpon gem get aes cb_mode ponid 0//查询ONT AES加解密模式
+SDK>asic xgpon gem set aes cb_mode ponid 0 direct 0 type 1//配置ONT AES接收方向解密模式
+3.1.3	前导码和定界符测试
+1.	测试目的
+测试ONT设备支持的最短的前导码和定界符，ONT能否从超短定界符和前导码中恢复过来。
+2.	测试方法
+测试长前导时，需要修改XGBC BW_Len配置，即一帧内可用带宽长度：
+H801XGBC>xgmac show indirect-reg 0 0x01800034 1//查询BW_Len
+0x01800034 : 0x000025cb
+H801XGBC>xgmac set indirect-reg 0 0x01800034 0x258a//配置BW_Len
+set <0x01800034 : 0x0000258a> OK!
+测试完短前导或者短定界符时，恢复到正常长度时，ONT可能不能正常上线，查询ONT发送PLOAM统计正常，查询OLT 接收PLOAM统计存在IK Invalid统计，此时OLT可能已经紊乱了，需要在主控板上配置关闭OLT光模块电源的操作，或者插拔一下光模块。
+MA5600T(config-if-gpon-0/12)#shutdown 0//关闭PON0口光模块电源
+MA5600T(config-if-gpon-0/12)#undo shutdown 0//打开PON0口光模块电源
+3.	测试涉及命令行
+H801XGBC>reg set profile 0 0 0 1 4 a56679e0 8 16 aaaaaaaaaaaaaaaa
+H801XGBC>reg set profile 0 1 0 0 4 ad4cc30f 8 16 aaaaaaaaaaaaaaaa
+H801XGBC>reg set profile 0 2 0 1 4 a56679e0 8 16 aaaaaaaaaaaaaaaa
+H801XGBC>reg set profile 0 3 0 0 4 ad4cc30f 8 16 aaaaaaaaaaaaaaaa//配置Profile
+3.2	AES
+3.2.1	下行单播XGEM Port解密测试
+1.	测试目的
+测试ONT下行单播XGEM Port AES解密功能是否正常。
+2.	测试涉及命令行
+MA5600T(config-gpon-lineprofile-5133)#gem modify 1 encrypt on//打开下行XGEM Port加密
+MA5600T(config-gpon-lineprofile-5133)#gem modify 1 encrypt off//关闭下行XGEM Port加密
+SDK>asic xgpon gem get gemport rx_key_index ponid 0//查询ONT接收数据加密key Index
+3.2.2	下行组播XGEM Port解密测试
+1.	测试目的
+测试ONT下行组播XGEM Port AES解密功能是否正常。
+2.	测试方法
+OLT默认下发的组播XGEM Port为4095，需要配置BTV，组播业务流才会走到组播XGEM Port上，ONT上也需要配置相应的组播业务，配置较为复杂，而且软件不支持组播XGEM Port加密，所以组播GEM Port采用一种替代测试方法。
+测试步骤：
+步骤1：在OLT上关闭下行密钥自动切换
+步骤2：ONU修改本地XGEMPORT过滤表，将一个ETH单播GEM Port修改为ETH组播GEM Port属性；
+步骤3：在ONU本地手动配置组播密钥key0、key1；
+步骤4：配置OLT组播密钥key0、key1；
+步骤5：修改OLT gemport表项，将相应的单播gemport修改为组播属性，并配置使用哪个加密密钥；
+步骤6：在这个组播GEM Port上发送下行ETH业务流，观察业务流是否丢包，观察ONU PON口解密相关统计是否正常。
+3.	测试涉及命令行
+MA5600T(config-if-gpon-0/4)#port 0 ont-password-renew 0//关闭密钥自动切换
+SDK>asic xgpon gem get gemport table ponid 0//查询XGEM Port过滤表
+SDK>asic xgpon gem set gemport table ponid 0 gemportid 192 enable 1 aes 1 type 1//修改ONU GEM Port 192属性
+SDK>asic xgpon gem set aes key_content ponid 0 type 2 0x00 0x01 0x02 0x03 0x04 0x05 0x06 0x07 0x08 0x09 0x0a 0x0b 0x0c 0x0d 0x0e 0x0f//配置ONU组播密钥
+SDK>asic xgpon gem get aes key ponid 0//查询ONU密钥
+H801XGBC>xgmac set indirect-reg 0 0x00b17fe0 0x000102030405060708090a0b0c0d0e0f//配置OLT组播密钥0
+H801XGBC>xgmac set indirect-reg 0 0x00b17ff0 0x00112233445566778899aabbccddeeff//配置OLT组播密钥1
+H801XGBC>xgmac show table 0 27 2046 0 2//查询OLT组播密钥
+H801XGBC>xgmac set indirect-reg 0 0x00b00300 0x00003fff//修改OLT GEM Port 192使用密钥0
+H801XGBC>xgmac set indirect-reg 0 0x00b00300 0x0000bfff//修改OLT GEM Port 192使用密钥1
+H801XGBC>xgmac set indirect-reg 0 0x00b00300 0x000023ff//修改OLT GEM Port 192不加密
+4.	OLT GEM PORT表说明
+表格基本描述：
+表格名称	PortToOnuTb
+起始地址	MAC0：0x00B0_0000
+MAC1：0x02B0_0000
+地址范围	MAC0：0x00B0_0000～0x00B0_3FFF
+MAC1：0x02B0_0000～0x02B0_3FFF
+表项数目	4096
+每项长度	32bit
+表项大小	16KBytes
+表项数据结构：
+Index	31..16		15	…	13	12	11	10	9	…		2	1	0
+PortIndex	Rsv	Key_Sel	Rsv	Valid	Valid1	Valid0	AESEn	ONUID
+数据结构说明：
+Field	Width	Description
+PortIndex	12	PortIndex做查表索引
+valid	1	表项有效标志
+表项无效的情况下，强制不加密
+Key_sel	1	选择密钥，
+0：选择密钥0
+1：选择密钥1
+Valid1	1	密钥1有效标志，1表示有效，0表示无效
+Valid0	1	密钥0有效标志，1表示有效，0表示无效
+AESEn	1	AES加密使能
+ONUID	10	支持1024个ONUID，约定为0——1023取值，注意，当ONU_ID=1023,表示此GEMPORT是组播类型的GEMPORT，加密时将会使用CipherKeyTb表中索引为1023的密钥；当ONU_ID等于其它值(0~1022)时，表示此gemport是单播的gemport，加密时将会使用CipherKeyTb表中索引为0~1022的密钥
+
+3.2.3	下行单播OMCI解密
+1.	测试目的
+测试ONT下行单播OMCI解密功能是否正常。
+2.	测试涉及命令行
+MA5600T(config-gpon-lineprofile-5133)#omcc encrypt on//打开下行OMCI加密
+MA5600T(config-gpon-lineprofile-5133)#omcc encrypt off//关闭下行OMCI加密
+SDK>asic xgpon gem get gemport rx_key_index ponid 0//查询ONT接收数据加密key Index
+3.2.4	下行组播OMCI解密
+1.	测试目的
+测试ONT下行单播OMCI解密功能是否正常。
+2.	测试方法
+同组播XGEM Port解密测试一样，因为OLT软件不支持组播OMCI加密，需要通过配置OLT寄存器完成组播OMCI解密测试。
+测试步骤：
+步骤1：在OLT上关闭下行密钥自动切换
+步骤2：ONU修改本地XGEMPORT过滤表，将一个单播OMCI修改为组播OMCI属性；
+步骤3：在ONU本地手动配置组播密钥key0、key1；
+步骤4：配置OLT组播密钥key0、key1；
+步骤5：修改OLT gemport表项，配置OMCI GEM Port使用的密钥；
+步骤6：查询ONU上OMCI统计和PON口统计，在OLT和ONU组播OMCI密钥配置一致后，组播OMCI接收正常，统计正常。
+3.	测试涉及命令行
+MA5600T(config-if-gpon-0/4)#port 0 ont-password-renew 0//关闭密钥自动切换
+SDK>asic xgpon gem get gemport table ponid 0//查询XGEM Port过滤表
+SDK>asic xgpon gem set gemport table ponid 0 gemportid 0 enable 1 aes 1 type 3//修改ONU OMCI  GEM Port属性
+SDK>asic xgpon gem set aes key_content ponid 0 type 2 0x00 0x01 0x02 0x03 0x04 0x05 0x06 0x07 0x08 0x09 0x0a 0x0b 0x0c 0x0d 0x0e 0x0f//配置ONU组播密钥
+SDK>asic xgpon gem get aes key ponid 0//查询ONU密钥
+H801XGBC>xgmac set indirect-reg 0 0x00b17fe0 0x000102030405060708090a0b0c0d0e0f//配置OLT组播密钥0
+H801XGBC>xgmac set indirect-reg 0 0x00b17ff0 0x00112233445566778899aabbccddeeff//配置OLT组播密钥1
+H801XGBC>xgmac show table 0 27 2046 0 2//查询OLT组播密钥
+H801XGBC>xgmac set indirect-reg 0 0x00b00000 0x00003fff//修改OLT OMCI Gemport使用密钥0
+H801XGBC>xgmac set indirect-reg 0 0x00b00000 0x0000bfff//修改OLT OMCI Gemport使用密钥1
+H801XGBC>xgmac set indirect-reg 0 0x00b00000 0x000023ff//修改OLT OMCI Gemport不加密
+3.2.5	密钥切换测试
+1.	测试目的
+测试密钥切换过程中业务是否受影响。
+2.	测试涉及命令行
+MA5600T(config-if-gpon-0/4)#port 0 ont-password-renew extra 5//配置密钥自动切换时间
+MA5600T(config-if-gpon-0/4)#display port info 0//查询OLT密钥切换时间
+H801XGBC>xgmac show table 0 27 0 0 2//查询OLT单播密钥
+SDK>asic xgpon gem get aes key ponid 0//查询ONU当前使用密钥
+3.2.6	上行单播XGEM Port、OMCI加密测试
+1.	测试目的
+测试上行单播XGEM Port加密功能是否正常。
+2.	测试方法
+ONU默认使能了上行跟随下行加密的使能开关，使能跟随功能时，上行是否加密、加密时使用哪个密钥和下行保持一致，不需要手动配置；当配置去使能跟随时，手动配置上行加密才会有效。
+上行不支持组播ETH和组播OMCI，单播ETH和单播OMCI上行加密测试方法基本相同，按上面两种方法中任意一种配置上行加密之后，发送上行以太业务流和OMCI，观察上行业务是否异常。
+3.	测试涉及命令行
+SDK>gpon_stack gemport aes_auto_refresh set 1//配置上行加密状态跟随下行加密状态
+SDK>asic xgpon gem get gemport rx_key_index ponid 0//查询下行加密的情况
+SDK>asic xgpon gem set gemport table ponid 0 gemportid 192 enable 1 aes 1 type 0//配置ONU gemport属性上行是否加密
+SDK>asic xgpon gem get gemport table ponid 0//查询gemport属性上行是否加密
+3.2.7	加密模式测试
+1.	测试目的
+测试AES两种加密模式功能是否正常。
+2.	测试方法
+SD5133 XGPON上、下行都支持两种加密模式，OLT方面，H801XGBC仅支持每16byte IFC加1的模式，H802XGBC仅支持每16byte 整个128bit的crypto_cnt加1的模式。
+3.	测试涉及命令行
+SDK>asic xgpon gem set aes cb_mode ponid 0 direct 0 type 0//配置ONU加密模式
+SDK>asic xgpon gem get aes cb_mode ponid 0//查询ONU加密模式
+3.3	FEC
+3.3.1	下行FEC纠错能力测试
+1.	测试目的
+测试下行FEC纠错能力是否正常。
+2.	测试方法
+协议要求下行强制开启FEC，下行FEC采用RS(248,216)编码方式，最多可以纠正16个字节的错误。当前对接的OLT都不支持FEC精确插错，所以系统测试暂时不能准确测试下行FEC纠错能力，只能定性测试下行FEC纠错功能。在OLT支持下行FEC精确插错功能前，此功能需要EDA保证。
+3.	测试涉及命令行
+H801XGBC>xgmac set indirect 0 0x00e00008 0x2//配置OLT下行FEC误码率
+H801XGBC>xgmac set indirect 0 0x00e00004 0x1//配置使能下行插入FEC误码
+SDK>asic xgpon gtc get stat ponid 0//查询ONU下行FEC统计
+4.	OLT FEC插错说明
+下行FEC误码配置使能寄存器
+寄存器名称	DGTC_ERR_EN
+寄存器地址	MAC0：0x00E0_0004
+MAC1：0x02E0_0004
+Bits位域	Name名称	Reset复位值	Type类型	Descrition说明
+ 31:1	Rsv	0x0	RO	保留
+ 0	dgtc_err_en	0x0	RW	下行FEC误码配置使能寄存器。 
+0：禁止； 
+1：使能。 
+FEC误码使能配置需要配合误码率配置。
+操作要求：先关闭FEC误码使能，再配置误码率，然后再打开FEC误码使能。
+下行FEC误码率配置寄存器
+寄存器名称	DGTC_ERR_RATE
+寄存器地址	MAC0：0x00E0_0008
+MAC1：0x02E0_0008
+Bits位域	Name名称	Reset复位值	Type类型	Descrition说明
+ 31:3	Rsv	0x0	RO	保留
+ 2：0	dgtc_err_rate	0x0	RW	下行FEC误码率配置寄存器。 
+001：10-3误码率； 
+010：10-4误码率； 
+011：10-5误码率； 
+100：10-6误码率； 
+101：10-7误码率； 
+其他：保留。
+3.3.2	下行FEC统计测试
+1.	测试目的
+测试FEC统计功能是否正常
+2.	测试方法
+因为目前OLT不支持下行FEC精确插错，支持模糊的等级插错，所以系统测试暂时只能定性测试各个统计项是否有效，至于统计值是否准确需要由EDA保证。
+FEC解码码字总数统计：只要开启FEC，此统计就会增加，统计增长速率约等于XGTC帧长/248*8000 CodeWord/S
+FEC解码未纠错的码字统计：上行每个FEC码字最多纠错8字节，下行每个FEC码字最多纠错16字节，当一个FEC码字包含错误字节数大于FEC纠错能力时，FEC解码未纠错的码字统计加1。
+FEC解码纠错的码字统计：当一个FEC码字包含错误字节数》=1个并且《=FEC纠错能力时，所有的错误字节都可以被纠正，同时FEC解码纠错的码字统计加1。
+FEC解码纠错的字节统计：当FEC解码纠错的码字统计加1时，此码块纠错的字节数，会增加到FEC解码纠错的字节统计。
+3.	测试涉及命令行
+H801XGBC>xgmac set indirect 0 0x00e00008 0x2//配置OLT下行FEC误码率
+H801XGBC>xgmac set indirect 0 0x00e00004 0x1//配置使能下行插入FEC误码
+SDK>asic xgpon gtc get stat ponid 0//查询ONU下行FEC统计
+3.3.3	下行FEC Second测试
+1.	测试目的
+测试下行FEC Second统计功能是否正常。
+2.	测试方法
+每1秒钟查询一次，如果存在FEC解码未纠错的码字统计，则FEC Second统计加1。
+如果OLT支持精确FEC插错，只需插入大于FEC纠错能力的错误字节数，使FEC解码未纠错的码字统计增加，FEC Second统计就会增加；还可以在OLT和ONU光纤之间接入一个可调光衰，通过调节光衰使误码变大，观察当FEC解码未纠错的码字统计增加时，FEC Second统计也会相应每秒也会增加。 
+3.	测试涉及命令行
+4.	SDK>asic xgpon gtc get stat ponid 0//查询ONU下行FEC统计
+3.3.4	上行FEC插错测试？ 
+1.	测试目的
+测试上行FEC插错功能是否正常，这是一个DFX功能，可以用来验证上行FEC纠错能力和上行FEC相关统计。
+2.	测试方法
+测试FEC插错功能，需要先打开FEC，上行FEC不是强制开启的，需要手动打开。SD5133XGPON的FEC插错功能，支持插错图样配置，插错图样最大2个字节，支持连续错误图样插入次数配置，最大31次，所以一次最多插入连续错误字节数为62字节。
+3.	测试涉及命令行
+MA5600T(config-gpon-lineprofile-5132)#fec-upstream enable//打开上行FEC
+SDK>asic xgpon glb set err_insert fec ponid 0 enable 1 times 1 pattern 65535//配置ONT上行插入FEC错误字节数和图样
+H801XGBC>xgmac clear statistic all 0//清除OLT PON口统计
+H801XGBC>xgmac show onustate 0 1//查询OLT线路统计
+3.3.5	上行FEC和Burst Profile ID切换统计测试
+1.	测试目的
+测试FEC和Burst Profile ID切换统计功能是否正常。
+2.	测试方法
+XGPON支持4个Profile，每个Profile可以配置不同的前导码和定界符，上行FEC状态可以是关闭和打开的。通过配置上行FEC开关状态，可以触发使用Profile ID的变化。
+3.	测试涉及命令行
+MA5600T(config-gpon-lineprofile-5132)#fec-upstream enable//打开上行FEC
+MA5600T(config-gpon-lineprofile-5132)#fec-upstream disable//关闭上行FEC
+SDK>asic xgpon glb get profile ponid 0//查询Profile配置和当前使用的Profile ID
+SDK>sdk read add 0x7b3101a0 1//查询FEC和ProfileID切换次数
+3.4	XGEM
+3.4.1	本地增删XGEM Port测试
+1.	测试目的
+测试本地增删GEMPORT表项是否会引起无法恢复的异常。
+2.	测试方法
+ONU本地动态增、删Gemport过滤表项，多次操作后，逻辑不应该出现异常。由于Gemport增、删时，重新添加的Gemport表项位置和原来可能不一样，而GMT配置并未增、删，所以可能会造成上行业务流中断，这种情况下，需要在OLT上删除ONT，再重新添加，业务流就可以恢复正常了。
+3.	测试涉及命令行
+SDK>asic xgpon gem set gemport table ponid 0 gemportid 196 enable 0//ONU本地删除Gemport表项
+SDK>asic xgpon gem set gemport table ponid 0 gemportid 196 enable 1 aes 1 type 0////ONU本地添加Gemport表项
+3.4.2	下行ETH切片测试
+1.	测试目的
+测试ONU GEM分片重组功能是否正常。
+2.	测试方法
+当前H801XGBC的OLT仅支持切片使能配置，不支持配置切片大小，所以最小1字节切片重组能力需要EDA保证。
+3.	测试涉及命令行
+H801XGBC>xgmac show indirect-reg 0 0x00900300 1//查询gemport 192切片配置
+H801XGBC>xgmac set indirect-reg 0 0x00900300 0xc0c0//配置gemport 192使能下行切片
+H801XGBC>xgmac set indirect-reg 0 0x00900300 0x80c0//配置gemport 192去使能下行切片
+SDK>asic xgpon gem get stat ponid 0//查询ONU下行gem统计
+4.	OLT切片配置说明
+表格基本描述：
+表格名称	valn_gemport
+起始地址	MAC0：0x0090_0000
+MAC1：0x0290_0000
+地址范围	MAC0：0x0090_0000～0x0090_3FFF
+MAC1：0x0290_0000～0x0290_3FFF
+表项数目	4096
+每项长度	16bit
+表项大小	16Kbytes
+表项数据结构
+Index	31:16	15	14	13	12	11	…	0
+表项0	Rsv	vld	Seg_en	reserved	gemport_index
+表项2	Rsv	Vld	Seg_en		gemport_index
+表项3	Rsv	Vld	Seg_en		gemport_index
+…	…
+表项4095	Rsv	vld	Seg_en	reserved	gemport_index
+数据结构说明
+Field	Width	Description
+vld	1	有效标识，高电平有效
+Seg_en	1	切片使能，指示对应的gemport_index是否支持GEM帧切片，
+1：支持切片
+0：不支持切片
+gemport_index	12	gemport_index标识
+3.4.3	上行切片测试
+1.	测试目的
+测试上行XGEM切片功能是否正常。
+2.	测试方法
+上行XGEM帧，在两种情况下可能产生切片，一种是待发送Eth报文长度大于带宽剩余可用字节，一种是待发送Eth报文长度大于GEM MTU值。
+GEM MTU配置范围为2~4095，单位为4字节。由于H801XGBC的XGEM重组模块设计存在问题，在处理连续大量XGEM分片时会丢包，所以如果配置ONU GEM MTU比较小时，需要配置ONU eth_cut_max_times为0，不允许非带宽尾部切片，这样相对产生的切片会少一些，OLT才能够正常重组。
+3.	测试涉及命令行
+SDK>asic xgpon gem set pli_max ponid 0 max 2048//配置GEM MTU大小，即最大GEM PLI
+SDK>asic xgpon gem set eth_cut_max_times ponid 0 max_tims 0//配置不允许非带宽尾部切片
+H801XGBC>xgmac show statistic all 0//查询OLT PON口统计
