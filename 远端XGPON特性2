@@ -1,0 +1,328 @@
+3.5	OMCI
+3.5.1	OMCI MIC校验测试
+1.	测试目的
+验证OMCI MIC校验功能是否正常。
+2.	测试方法
+ONU支持OMCI接收方向和发送方向MIC校验独立配置使能，OLT端是一起配置的，只有一个开关。当发送方向关闭MIC校验，而接收方向打开MIC校验的话，就会出现MIC校验错误。
+3.	测试涉及命令行
+SDK>asic xgpon omci set mic enable ponid 0 direct 0 enable 0//配置ONU端接收方向OMCI校验是否使能
+SDK>asic xgpon omci set mic enable ponid 0 direct 1 enable 0//配置ONU端发送方向OMCI校验是否使能
+H801XGBC>xgmac set mic omci 0 0//配置OLT端MIC校验是否使能
+H801XGBC>xgmac show statistic all 0//查询OLT PON口统计
+SDK>asic xgpon omci get stat ponid 0//查询ONU端OMCI统计
+3.5.2	变长OMCI接收测试
+1.	测试目的
+测试变长OMCI接收功能是否正常。
+2.	测试方法
+因为OLT不支持OMCI手动发送，所以系统测试验证接收OMCI长度，使用的是Eth业务报文模拟的方式，验证范围为64~2040字节。ONU支持OMCI变长范围为14~2040Byte，所以变长OMCI接收功能还是需要EDA保证。
+Eth业务报文模拟OMCI报文，需要修改下行接收Eth业务的Gemport属性为OMCI，这样以太报文就会送到OMCI模块去处理。因为以太报文肯定不会进行OMCI MIC校验，所以接收到的所有Eth模拟的OMCI报文全部会统计为MIC校验错误。
+3.	测试涉及命令行
+SDK>asic xgpon gem set gemport table ponid 0 gemportid 192 enable 1 aes 1 type 2//修改ONU GEM Port 192类型为OMCI
+SDK>asic xgpon omci get stat ponid 0//查询ONU端OMCI统计
+3.5.3	变长OMCI发送测试
+1.	测试目的
+测试变长OMCI发送功能是否正常。
+2.	测试方法
+ONU支持发送14~2040字节的变长OMCI，当前H801XGBC最大支持2000字节OMCI正常接收，超过2000字节时会统计为Oversize报文。
+3.	测试涉及命令行
+SDK>asic xgpon omci debug send ponid 0 sync 1 lf 1 msg_len 14 edit_len 0 default_value 0//配置ONU发送变长OMCI报文
+H801XGBC>xgmac show statistic all 0//查询OLT PON口统计
+SDK>asic xgpon omci get stat ponid 0//查询ONU端OMCI统计
+3.5.4	接收OMCI缓存溢出测试
+1.	测试目的
+测试OMCI缓存溢出后芯片是否会出现不可恢复的错误。
+2.	测试方法
+可以通过Eth报文模拟OMCI报文，10G流量发送，很容易造成OMCI缓存溢出，因为软件处理OMCI的速度是小于10G的；还有一个简单的办法，关闭OMCI接收中断，让软件停止接收OMCI报文，也很容易使OMCI缓存溢出。
+OMCI缓存溢出再恢复后，处理OMCI报文不应该出现异常。
+3.	测试涉及命令行
+SDK>asic xgpon glb set alarm int_enable ponid 0 alarm 7 enable 0//配置ONU关闭OMCI接收中断
+SDK>asic xgpon omci get stat ponid 0//查询ONU端OMCI统计
+3.5.5	CPU将OMCI报文切片发送测试
+1.	测试目的
+测试OMCI报文多次切片后，OLT接收到的OMCI是否异常。
+2.	测试方法
+通过OMCI发送接口，发送一个完整OMCI的多个分片，注意配置DBA带宽，使带宽至少小于其中某个分片的大小，观察OLT重组OMCI报文是否正常。
+发送OMCI分片时，最好抓一个完整的OMCI报文出来，再把它分片，否则OLT重组时可能会出现MIC错误。
+3.	测试涉及命令行
+SDK>asic xgpon omci debug send ponid 0 sync 1 lf 0 msg_len 20 edit_len 0 default_value 0//配置ONU发送OMCI分片
+SDK>asic xgpon omci debug send ponid 0 sync 1 lf 1 msg_len 20 edit_len 0 default_value 0//配置ONU发送OMCI尾片
+3.5.6	软件做OMCI MIC加速测试
+1.	测试目的
+测试软件进行MIC加速功能是否正常。
+2.	测试方法
+ONU默认使用逻辑进行MIC校验，逻辑也提供了MIC加速的接口，供软件调用，这样软件也可以实现MIC校验。使用软件进行MIC校验时，需要关闭逻辑MIC校验功能。
+3.	测试涉及命令行
+SDK>asic xgpon omci set mic enable  ponid 0 direct 1 enable 0//配置ONU OMCI发送方向不做MIC校验
+SDK>gpon_stack omci cpu_mic  set 1//配置软件进行OMCI MIC校验使能
+3.5.7	动态刷新OMCI Ready指示测试?
+1.	测试目的
+测试强制拉低OMCI Ready是否引起OMCI模块异常。
+2.	测试方法
+
+3.	测试涉及命令行
+3.6	PLOAM
+3.6.1	PLOAM MIC校验测试
+1.	测试目的
+验证PLOAM MIC校验功能是否正常。
+2.	测试方法
+ONU支持PLOAM接收方向和发送方向MIC校验独立配置使能，OLT端是一起配置的，只有一个开关。当发送方向关闭MIC校验，而接收方向打开MIC校验的话，就会出现MIC校验错误。
+3.	测试涉及命令行
+SDK>asic xgpon ploam set mic enable ponid 0 direct 0 enable 0//配置ONU端接收方向PLOAM校验是否使能
+SDK>asic xgpon ploam set mic enable ponid 0 direct 1 enable 0//配置ONU端发送方向PLOAM校验是否使能
+H801XGBC>xgmac set mic ploam 0 0//配置OLT端MIC校验是否使能
+H801XGBC>xgmac show statistic all 0//查询OLT PON口统计
+SDK>asic xgpon ploam get stat ponid 0//查询ONU端PLOAM统计
+3.6.2	接收广播ONU-ID的PLOAM消息测试
+1.	测试目的
+测试ONU响应广播ONU-ID是否正常。
+2.	测试方法
+使用H801XGBC提供的PLOAM发送接口，下行发送指定类型的PLOAM消息，Deactivate_ONU-ID消息ID为5，ONU响应广播Deactivate_ONU-ID消息时会下线，下线后会重新注册上线。 
+3.	测试涉及命令行
+H801XGBC>ploam send 0 255 5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0//配置OLT发送广播Deactivate_ONU-ID消息
+3.6.3	过滤指定的MSG-ID的PLOAM消息测试
+1.	测试目的
+测试指定MSG-ID的PLOAM消息过滤功能是否正常。
+2.	测试方法
+ONU支持两路PLOAM消息过滤，可以分别独立配置，被过滤的PLOAM消息会被丢弃，不会交给软件处理，所以不会得到响应。
+3.	测试涉及命令行
+SDK>asic xgpon ploam set filter ponid 0 index 0 enable 1 ploamid 5//配置ONU过滤指定MSG-ID的PLOAM消息
+H801XGBC>ploam send 0 255 5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0//配置OLT发送广播Deactivate_ONU-ID消息
+3.6.4	PLOAM接收缓存复位测试
+1.	测试目的
+测试PLOAM接收缓存复位功能是否会引起不能恢复的异常。
+2.	测试方法
+PLOAM接收缓存复位之后，原来缓存中的PLOAM消息会被清除。正常软件PLOAM处理速度较快，PLOAM缓存不容易堆积消息，测试时，可以关闭PLOAM接收中断，使软件停止读取PLOAM消息，PLOAM缓存就很容易被填满。
+3.	测试涉及命令行
+SDK>asic xgpon glb set alarm int_enable ponid 0 alarm 8 enable 0//配置关闭PLOAM接收中断
+SDK>asic xgpon ploam debug reset ponid 0 direct 0//配置复位PLOAM接收缓存
+3.6.5	XGMAC处理Ranging_Time PLOAM消息测试
+1.	测试目的
+测试逻辑处理Ranging_Time消息功能是否正常。
+2.	测试方法
+Ranging_Time消息既可以由软件处理，也可以由逻辑处理，逻辑处理一般用于Typeb应用中，能够实现更短的倒换时间。使能逻辑处理Ranging_Time消息，每次仅能处理一个，逻辑处理完后会清除使能配置。
+3.	测试涉及命令行
+SDK>asic xgpon ploam set trig ponid 0 type 1 enable 1//配置逻辑处理Ranging_Time PLOAM消息使能
+SDK>asic xgpon ploam get trig ponid 0 //查询逻辑处理Ranging_Time PLOAM消息使能状态
+H801XGBC>ploam send 0 0 4 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0//配置OLT发送单播Ranging_Time PLOAM消息，EQD为相对值
+H801XGBC>ploam send 0 0 4 1 0 18 234 192 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0//配置OLT发送单播Ranging_Time PLOAM消息，EQD为绝对值
+3.6.6	PLOAM接收缓存满丢弃测试
+1.	测试目的
+测试PLOAM缓存溢出后芯片是否会出现不可恢复的错误。
+2.	测试方法
+关闭PLOAM接收中断，让软件停止读取PLOAM报文，可以使PLOAM缓存溢出，出现缓存满丢弃，等到PLOAM缓存恢复正常时，处理PLOAM报文不应该出现异常。
+3.	测试涉及命令行
+SDK>asic xgpon glb set alarm int_enable ponid 0 alarm 8 enable 0//配置ONU关闭PLOAM接收中断
+SDK>asic xgpon ploam get stat ponid 0//查询ONU端PLOAM统计
+3.6.7	软件进行PLOAM MIC校验测试
+1.	测试目的
+测试软件进行MIC加速功能是否正常。
+2.	测试方法
+ONU默认使用逻辑进行MIC校验，逻辑也提供了MIC加速的接口，供软件调用，这样软件也可以实现MIC校验。使用软件进行MIC校验时，需要关闭逻辑MIC校验功能。
+3.	测试涉及命令行
+SDK>asic xgpon ploam set mic enable  ponid 0 direct 1 enable 0//配置ONU PLOAM发送方向不做MIC校验
+SDK>gpon_stack ploam cpu_mic  set 1//配置软件进行PLOAM MIC校验使能
+3.7	诊断运维
+3.7.1	PON-ID信息同步测试
+1.	测试目的
+测试ONU是否能与OLT的PON-ID保持一致。
+2.	测试涉及命令行
+H801XGBC>xgmac set indirect-reg 0 0x00e00030 0x11223344//OLT配置PON-ID低32bit
+H801XGBC>xgmac set indirect-reg 0 0x00e00034 0x5566//OLT配置PON-ID高19bit
+SDK>asic xgpon glb get pon_id ponid 0//ONU上查询PON-ID配置
+SDK>asic xgpon glb get alarm int_status ponid 0//查询PON-ID更新中断状态
+3.	OLT PON-ID配置寄存器说明
+寄存器名称	DGTC_PON_ID_L
+寄存器地址	MAC0：0x00E0_0030
+MAC1：0x02E0_0030
+Bits位域	Name名称	Reset复位值	Type类型	Descrition说明
+ 31:0	Dgtc_pon_id_l	0x0	RW	OLT PON口ID标识低32bit。
+
+寄存器名称	DGTC_PON_ID_H
+寄存器地址	MAC0：0x00E0_0034
+MAC1：0x02E0_0034
+Bits位域	Name名称	Reset复位值	Type类型	Descrition说明
+31:19	Rsv	0x0	RO	保留
+ 18:0	Dgtc_pon_id_h	0x0	RW	OLT PON口ID标识高19bit。
+3.7.2	上行加扰不加扰测试
+1.	测试目的
+测试上行加扰和不加扰功能是否正常。
+2.	测试方法
+配置上行不加绕之后，可能需要配置PLOAM不进行MIC校验，ONU才可以正常上线，由于不加绕情况下，线路上出现误码的可能性增大，所以发送业务流时，报文payload最好是0xAAAA，否则可能会出现FCS错误。
+3.	测试涉及命令行
+H801XGBC>xgmac set mic ploam 0 0//配置OLT端MIC校验是否使能
+SDK>asic xgpon ploam set mic enable ponid 0 direct 0 enable 0//配置ONU端接收方向PLOAM校验是否使能
+SDK>asic xgpon gmac set scramble enable ponid 0 type 2 enable 0//配置ONU上行是否加扰
+H801XGBC>xgmac set indirect-reg 0 0x01000040 1//配置OLT上行是否解扰
+4.	OLT上行解扰配置寄存器说明
+寄存器名称	IN_DECRI_SET
+寄存器地址	MAC0：0x0100_0040
+MAC1：0x0300_0040
+Bits位域	Name名称	Reset复位值	Type类型	Descrition说明
+31：1	rsvd	0	RO	保留
+0	in_decri_set	0	RW	上行数据是否解扰：
+0：解扰
+1：不解扰
+3.7.3	下行加扰不加扰测试
+1.	测试目的
+测试下行加扰和不加扰功能是否正常。
+2.	测试方法
+配置下行不加绕之后，可能需要配置PLOAM不进行MIC校验，由于不加绕情况下，线路上出现误码的可能性增大，需要配置LOS和LOB阈值，ONU才能正常上线，FPGA阶段，发送业务流，ONU就会掉线，需要ASIC确认。
+ONU下行加扰配置涉及PSBd域和下行XGTC帧净荷，这两个配置需要一致。
+3.	测试涉及命令行
+H801XGBC>xgmac set mic ploam 0 0//配置OLT端MIC校验是否使能
+SDK>asic xgpon ploam set mic enable ponid 0 direct 0 enable 0//配置ONU端接收方向PLOAM校验是否使能
+SDK>asic xgpon gmac set scramble enable ponid 0 type 0 enable 0//配置下行XGTC帧净荷是否解扰
+SDK>asic xgpon gmac set scramble enable ponid 0 type 1 enable 0//配置下行PSBd域是否解扰
+H801XGBC>xgmac set indirect-reg 0 0x00e00000 0x20000//配置OLT下行是否加扰
+H801XGBC>xgmac set indirect 0 0x010000b8 0x320666//配置OLT LOS/LOB阈值
+4.	OLT下行加扰配置寄存器说明
+寄存器名称	DGTC_CONFIG
+寄存器地址	MAC0：0x00E0_0000
+MAC1：0x02E0_0000
+Bits位域	Name名称	Reset复位值	Type类型	Descrition说明
+ 31:18	Rsv	0x0	RO	保留
+17	addsrc_disable	0x0	RW	控制下行输出业务数据是否加扰
+0：输出加扰； 
+1：输出不加扰
+16	dgtc_pld_type	0x0	RW	控制下行输出业务数据种类（除 GTC 帧头之外的数据）； 
+0：输出正常业务数据； 
+1：输出 dgtc_config配置的bit[15:0]的数据。
+15：0	dgtc_pld_data	0x0	RW	可任意配置数据，作为配置净荷。
+5.	OLT LOS/LOB阈值配置寄存器说明
+寄存器名称	Los_jdg_thr
+寄存器地址	MAC0：0x0100_00B8
+MAC1：0x0300_00B8
+Bits位域	Name名称	Reset复位值	Type类型	Descrition说明
+31：22	rsvd	0	RO	保留
+21：16	losi_cyc	0x32	RW	LOSI告警在复位信号结束后产生时间限制
+15：12	rsvd	0	RO	保留
+11:8	losi_jdg_thr	0x4	RW	LOSI判断的帧数门限值
+7：4	Lobi_jdg_thr	0x6	RW	LOBI判断的帧数门限值
+3：0	Los_jdg_thr	0x4	RW	LOS判断的帧数门限值
+
+3.7.4	抓包功能测试
+1.	测试目的
+测试抓包功能是否正常。
+2.	测试方法
+SD5133支持的抓包类型有：
+	下行XGEM数据（指定XGEM、所有XGEM）
+	下行PLOAM（广播、本地、指定msg_id、所有msg_id）
+	Burst信息
+	Tcont信息（指定Tcont、所有Tcont）
+	Burst数据（加扰之后）
+	DBRu（指定Tcont、所有Tcont）
+	Bwmap（指定AllocID、所有AllocID）
+注意使能抓包之前，需要确保抓包状态处于空闲，否则配置失败，抓包状态可以配置强制停止。
+3.	测试涉及命令行
+SDK>asic xgpon glb get cap status ponid 0//查询ONT当前抓包状态
+SDK>asic xgpon glb set cap force_stop ponid 0//配置ONT抓包功能强制停止
+SDK>asic xgpon glb set cap start ponid 0 type 0 line_num 20 all//配置ONT开启抓包功能
+SDK>asic xgpon glb get cap data ponid 0 line_num 20 type 0//查询ONT的抓包数据
+3.7.5	下行接收FCS错误报文丢弃控制测试
+1.	测试目的
+测试下行FCS错误报文丢弃控制功能是否正常
+2.	测试方法
+XGMAC可以配置是否对下行接收到的FCS错误报文打上错误标识，如果配置使能，则错误报文在后级模块直接丢弃，不做处理；如果配置成去使能，则报文在后级模块作为正常报文走正常流程处理。
+3.	测试涉及命令行
+SDK>asic xgpon gem set fcs ponid 0 type 0 enable 1//配置下行FCS报文是否打上错误标识
+SDK>micro ptype print//查询NP处理报文统计
+3.7.6	光模块使能状态模式测试
+1.	测试目的
+测试光模块发光控制功能是否正常
+2.	测试方法
+光模块发光模式可以配置为常开、常关、由逻辑控制，由逻辑控制即逻辑根据OLT分配的Bwmap控制光模块发光。
+测试光模块常开、常关模式时，需要配置GPON协议栈不会修改光模块模式。
+3.	测试涉及命令行
+SDK>gpon_stack ploam laser change 0//配置XGPON协议栈不修改光模块模式
+SDK>asic xgpon glb set laser_mode ponid 0 mode 0//配置ONT光模块发光模式
+3.7.7	上行XGTC帧DG域强制置1测试
+1.	测试目的
+测试XGTC上行帧DG域强制置1功能是否正常
+2.	测试方法
+DG上报分逻辑检测上报模式和软件配置模式，软件配置DG使能后，DG域会一直有效，直到软件配置去使能。
+3.	测试涉及命令行
+SDK>asic xgpon gtc set dg ponid 0 cfg_type 0 mode 1//配置ONT上行XGTC DG域由软件配置
+SDK>asic xgpon gtc set dg ponid 0 cfg_type 3 sw_enable 0//配置ONT软件配置DG域使能
+H801XGBC>xgmac show indirect-reg 0 0x01180000 1//查询OLT上各个ONT当前DG状态
+4.	OLT Dying-Gasp表说明
+表格基本描述
+表格名称	DYING_GSP_table
+起始地址	MAC0：0x0118_0000
+MAC1：0x0318_0000
+地址范围	MAC0：0x0118_0000～0x0118_007F
+MAC1：0x0318_0000～0x0318_007F
+表项数目	32
+每项长度	32
+表项大小	128Bytes
+表项数据结构
+Index	31	30	…	1	0
+0	DYING_GSP_31	DYING_GSP_30	…	DYING_GSP_1	DYING_GSP_0
+…	…
+31	DYING_GSP_1023	DYING_GSP_1022	…	DYING_GSP_993	DYING_GSP_992
+数据结构说明
+Field	Width	Description
+ONU_ID	10	ONU标识号
+DYING_GSP	1	Dying gsp当前状态。
+按照ONU_ID[9:5]索引，查到的32bit对应相同ONU_ID[9:5]对应的32个ONU的告警状态，32bit从高bit到低bit对应的ONU_ID递减进行排列。
+3.7.8	上行插错测试
+1.	测试目的
+测试ONT上行插错功能是否正常
+2.	测试方法
+SD5133支持上行插错类型有：FEC插错、以太FCS插错、BIP插错、DBRu插错、XGEM Hec插错、XGTC Hec插错。
+配置插错功能使能时，必须有相应的条件才能在OLT上看到效果，比如：以太FCS插错，必须上行发送以太报文，才能在OLT上看到FCS错误统计；配置DBRu插错，至少有一个Tcont是非固定带宽模式。
+3.	测试涉及命令行
+SDK>asic xgpon glb set err_insert bip ponid 0 enable 1 times 10 pattern 1000//配置ONT使能上行插错功能
+3.7.9	CPU构造发送切片交织XGEM帧测试
+1.	测试目的
+测试ONT上行发送XGEM交织功能是否正常
+2.	测试方法
+SD5133手动发送XGEM帧，是通过OMCI发送通道实现的，所以在发送Eth报文时，需要关闭发送方向OMCI CRC校验功能，否则Eth报文会被进行OMCI MIC校验，导致OLT收到的Eth报文FCS错误。
+XGEM帧交织测试时，至少需要OLT配置两个业务gemport，配置ONT上发送XGEM分片，发送顺序例如：XGEM1首分片——XGEM2首分片——XGEM1尾分片——XGEM2尾分片。
+3.	测试涉及命令行
+SDK>asic xgpon omci set mic enable ponid 0 direct 1 enable 1//关闭ONT发送方向OMCI MIC校验
+SDK>asic xgpon test eth_send ponid 0 gemportid 2176 sync 1 lf 1 msg_len 64 edit_len 64 0x00 0x00 0x11 0x11 0x00 0x20 0x00 0x10 0x22 0x22 0x00 0x20 0x81 0x00 0x00 0x20 0x08 0x00 0x45 0x00 0x00 0x2a 0xa1 0x82 0x00 0x00 0xff 0xfd 0x97 0xfb 0xc0 0x55 0x01 0x02 0xc0 0x00 0x00 0x01 0x00 0x01 0x02 0x03 0x04 0x05 0x06 0x07 0x08 0x09 0x0a 0x0b 0x0c 0x0d 0x0e 0x0f 0x10 0x11 0x12 0x13 0x14 0x15 0x82 0x10 0xc2 0x40//配置64字节的Eth报文整包发送
+SDK>asic xgpon test eth_send ponid 0 gemportid 2176 sync 1 lf 0 msg_len 32 edit_len 32 0x00 0x00 0x11 0x11 0x00 0x20 0x00 0x10 0x22 0x22 0x00 0x20 0x81 0x00 0x00 0x20 0x08 0x00 0x45 0x00 0x00 0x2a 0xa1 0x82 0x00 0x00 0xff 0xfd 0x97 0xfb 0xc0 0x55//配置XGEM1的64字节的Eth报文第一个XGEM分片，分片净荷长度为32Byte
+SDK>asic xgpon test eth_send ponid 0 gemportid 1028 sync 1 lf 0 msg_len 32 edit_len 32 0x00 0x00 0x11 0x11 0x00 0x20 0x00 0x10 0x22 0x22 0x00 0x20 0x81 0x00 0x00 0x20 0x08 0x00 0x45 0x00 0x00 0x2a 0xa1 0x82 0x00 0x00 0xff 0xfd 0x97 0xfb 0xc0 0x55//配置XGEM2的64字节的Eth报文第一个XGEM分片，分片净荷长度为32Byte
+SDK>asic xgpon test eth_send ponid 0 gemportid 2176 sync 1 lf 1 msg_len 32 edit_len 32 0x01 0x02 0xc0 0x00 0x00 0x01 0x00 0x01 0x02 0x03 0x04 0x05 0x06 0x07 0x08 0x09 0x0a 0x0b 0x0c 0x0d 0x0e 0x0f 0x10 0x11 0x12 0x13 0x14 0x15 0x82 0x10 0xc2 0x40//配置XGEM2的64字节的Eth报文第二个XGEM分片，分片净荷长度为32Byte
+SDK>asic xgpon test eth_send ponid 0 gemportid 1028 sync 1 lf 1 msg_len 32 edit_len 32 0x01 0x02 0xc0 0x00 0x00 0x01 0x00 0x01 0x02 0x03 0x04 0x05 0x06 0x07 0x08 0x09 0x0a 0x0b 0x0c 0x0d 0x0e 0x0f 0x10 0x11 0x12 0x13 0x14 0x15 0x82 0x10 0xc2 0x40//配置XGEM2的64字节的Eth报文第一个XGEM分片，分片净荷长度为32Byte
+3.7.10	TCONT 1S累计带宽授权和发送Idle帧字节统计
+1.	测试目的
+测试指定TCONT 1s累计带宽授权和发送Idle帧字节统计功能是否正常
+2.	测试方法
+ONT支持指定TCONT 1s累计带宽授权和发送Idle帧字节统计，支持最多同时统计8个TCONT，8路统计可以分别配置使能。
+注意：正常OLT会每隔一定时间进行开窗，开窗时间内不会分配带宽，所以在测试1S统计时，需要关闭OLT自动发现，这样OLT就不会开窗了，测试完后要记得打开。
+3.	测试涉及命令行
+H801XGBC>reg set auto-find 0 0//关闭OLT自动发现
+SDK>asic xgpon gtc set tcont 1s_stat ponid 0 index 0 enable 1 tcontid 0//配置TCONT 1s统计
+SDK>asic xgpon gtc get tcont 1s_stat ponid 0//查询TCONT 1s统计
+3.8	DBA
+3.8.1	4字节带宽授权测试
+1.	测试目的
+测试ONT响应4字节带宽授权是否正常
+2.	测试方法
+H801XGBC默认分配最小带宽是16字节，如果希望OLT分配小于16字节的带宽，需要进行配置；同样主控板软件也不支持配置4字节DBA，需要在XGBC单板上直接配置修改DBA表项。可在ONT上配置Bwmap抓包确认配置是否生效。
+3.	测试涉及命令行
+H801XGBC>xgmac dba minbw 0 1//配置OLT最小带宽
+H801XGBC>xgmac dba modify 0 0 0 1 0 0 1 3 1 0 0 4//修改DBA配置4字节授权
+3.8.2	带宽授权测试
+1.	测试目的
+测试ONU对不同DBA授权响应是否正常
+2.	测试方法
+
+3.	测试涉及命令行
+3.9	Flush
+1.	测试目的
+测试Flush功能是否正常
+2.	测试方法
+
+3.	测试涉及命令行
+3.10	优先级抢占
+1.	测试目的
+2.	测试方法
+3.	测试涉及命令行
+3.11	Typeb
+1.	测试目的
+2.	测试方法
+3.	测试涉及命令行
+4	附录
+    无
